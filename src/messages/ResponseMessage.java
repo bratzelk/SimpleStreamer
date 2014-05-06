@@ -6,6 +6,6 @@ public abstract class ResponseMessage extends Message{
 
 	@Override
 	public String requestOrResponseMessage() {
-		return Strings.MESSAGE_RESPONSE_TYPE;
+		return Strings.RESPONSE_MESSAGE;
 	}
 }

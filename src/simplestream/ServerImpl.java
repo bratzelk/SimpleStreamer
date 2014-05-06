@@ -49,7 +49,7 @@ public class ServerImpl implements Server {
         
         //Send a JSON Response...
         
-        Message responseMessage = MessageFactory.createMessage(Strings.START_REQUEST_TYPE);
+        Message responseMessage = MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
         
         Socket socket = new Socket(Settings.DEFAULT_HOSTNAME, Settings.DEFAULT_REMOTE_PORT);
         
