@@ -40,6 +40,10 @@ public class SimpleStreamApplication {
 		
 		Out.printHeading(Settings.APP_NAME + " " + Settings.APP_VERSION);
 
+		
+		//Show the local image viewer
+		LocalView localView = new LocalView();
+		localView.start();
 	}
 
 	

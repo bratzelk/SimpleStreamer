@@ -12,17 +12,24 @@ import com.github.sarxos.webcam.ds.buildin.natives.OpenIMAJGrabber;
 
 public class LocalView {
 	
-	public static void main(String[] args) {
+	Viewer myViewer;
+	JFrame frame;
+	
+	public LocalView() {
 		
-		Viewer myViewer = new Viewer();
-		JFrame frame = new JFrame("Simple Stream Viewer");
+		myViewer = new Viewer();
+		frame = new JFrame("Simple Stream Viewer");
 		
+	}
+	
+	public void start() {
+
 		frame.setVisible(true);
 		frame.setSize(320, 240);
 		
+		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(myViewer);
-		
 		
 		/**
 		 * This example show how to use native OpenIMAJ API to capture raw bytes
@@ -71,6 +78,7 @@ public class LocalView {
 		} while (++i < n);
 
 		grabber.stopSession();
+		
 	}
 	
 
