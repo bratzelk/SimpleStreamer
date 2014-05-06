@@ -1,6 +1,10 @@
 #java specific
 *.class
 
+#directory
+
+/bin/*
+
 #generic files to ignore
 *~
 *.lock

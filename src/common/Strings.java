@@ -24,4 +24,5 @@ public class Strings {
 	public static final String MESSAGE_RESPONSE_TYPE = "response";
 	
 	public static final String START_REQUEST_TYPE = "startstream";
+	public static final String START_RESONSE_TYPE = "startingstream";
 }

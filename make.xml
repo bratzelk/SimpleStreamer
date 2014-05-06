@@ -28,8 +28,8 @@
     </target>
     
     <target name="run" depends="create_run_jar">
-		<java classname="simplestream.SimpleStreamApplication" classpath="SimpleStreamer.jar">
-		  <arg line="" />
+		<java jar="SimpleStreamer.jar" fork="true">
+		  <arg line="-remote localhost" />
 		</java>
 	</target>
 	

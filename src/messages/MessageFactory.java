@@ -20,6 +20,9 @@ public class MessageFactory {
 		if(lowercaseMessageType.equals(Strings.START_REQUEST_TYPE)){
 			return new StartRequestMessage();
 		}
+		else if(lowercaseMessageType.equals(Strings.START_RESONSE_TYPE)){
+			return new StartResponseMessage();
+		}
 		else{
 			throw new MessageNotFoundException();
 		}

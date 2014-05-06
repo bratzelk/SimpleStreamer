@@ -51,7 +51,7 @@ public class ServerImpl implements Server {
         
         Message responseMessage = MessageFactory.createMessage(Strings.START_REQUEST_TYPE);
         
-        Socket socket = new Socket(Settings.DEFAULT_HOSTNAME, Settings.DEFAULT_PORT);
+        Socket socket = new Socket(Settings.DEFAULT_HOSTNAME, Settings.DEFAULT_REMOTE_PORT);
         
         try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8)) {
         	outputStreamWriter.write(responseMessage.toJSON());

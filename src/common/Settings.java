@@ -14,8 +14,13 @@ public class Settings {
 	 * 
 	 */
 	
+	
+	public static final int DEFAULT_STREAMING_PORT = 6262;
+	
 	public static final String DEFAULT_HOSTNAME = "localhost";
-	public static final int DEFAULT_PORT = 6262;
+	public static final int DEFAULT_REMOTE_PORT = 5555;
+	
+	public static final int DEFAULT_STREAMING_RATE = 100;
 		
 	
 	/**
