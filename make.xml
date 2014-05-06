@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for SimpleStreamer with Jar-in-Jar Loader">
+    
+    
+    <!--By Kim 2014 -->
+    <!--ANT 1.7 is required -->
+	
+    <target name="create_run_jar">
+    	    	
+    	<!-- Create SimpleStreamer Jar -->
+        <jar destfile="./SimpleStreamer.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="simplestream.SimpleStreamApplication"/>
+                <attribute name="Class-Path" value="."/>
+            	<attribute name="Rsrc-Class-Path" value="./ commons-codec-1.7.jar json_simple-1.1.jar args4j-2.0.21.jar bridj-0.7-20130703.103049-42.jar commons-io-2.4.jar slf4j-api-1.7.2.jar webcam-capture-0.3.10-RC6.jar"/>
+            </manifest>
+            <zipfileset src="jar-in-jar-loader.zip"/>
+            <fileset dir="./bin"/>
+            <zipfileset dir="./lib" includes="commons-codec-1.7.jar"/>
+        	<zipfileset dir="./lib" includes="args4j-2.0.21.jar"/>
+            <zipfileset dir="./lib" includes="json_simple-1.1.jar"/>
+            <zipfileset dir="./lib" includes="bridj-0.7-20130703.103049-42.jar"/>
+            <zipfileset dir="./lib" includes="commons-io-2.4.jar"/>
+            <zipfileset dir="./lib" includes="slf4j-api-1.7.2.jar"/>
+            <zipfileset dir="./lib" includes="webcam-capture-0.3.10-RC6.jar"/>          
+        </jar>
+    </target>
+    
+    <target name="run" depends="create_run_jar">
+		<java classname="simplestream.SimpleStreamApplication" classpath="SimpleStreamer.jar">
+		  <arg line="" />
+		</java>
+	</target>
+	
+	
+</project>
