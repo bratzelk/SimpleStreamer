@@ -9,13 +9,13 @@ public abstract class Message {
 	 * 
 	 * This is the base Message class.
 	 * 
-	 * Please don't extend this class
-	 * Instead, extend either the RequestMessage or ResponseMessage classes
+	 * Please don't extend this class.
+	 * Instead, extend either the RequestMessage or ResponseMessage classes.
 	 * 
 	 */
 	
 	/**
-	 * A message can be a request or a response message
+	 * A message can be a request or a response message.
 	 */
 	public abstract String requestOrResponseMessage();
 	
@@ -26,21 +26,23 @@ public abstract class Message {
 	
 
 	/**
-	 * This should be overridden if you want to send a non-standard message
+	 * This should be overridden if you want to send a non-standard message.
 	 */
 	public String toJSON() {
+		
 		return standardMessageJSON().toJSONString();
 	}
 	
 	
 	/**
-	 * This method generates standard message JSON
+	 * This method generates standard message JSON.
 	 * Example:
 	 * {"response":"stoppedstream"}
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	protected JSONObject standardMessageJSON(){
+	protected JSONObject standardMessageJSON() {
+		
 		JSONObject jsonMessage = new JSONObject();
 		jsonMessage.put(requestOrResponseMessage(), getType());
 		return jsonMessage;

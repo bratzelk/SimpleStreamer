@@ -6,6 +6,7 @@ public class StatusResponseMessage extends ResponseMessage {
 
 	@Override
 	public String getType() {
+		
 		return Strings.STATUS_RESONSE_MESSAGE;
 	}
 

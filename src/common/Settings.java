@@ -31,6 +31,10 @@ public class Settings {
 	//Should we output lots of text... (good for debugging and for the GUI)
 	public static final Boolean VERBOSE = true;
 	
+	public static final Boolean SHOW_GUI = true;
+	
+	public static final int MAX_CONNECTIONS = 3;
+	
 	/**
 	 * Systems Settings
 	 * 

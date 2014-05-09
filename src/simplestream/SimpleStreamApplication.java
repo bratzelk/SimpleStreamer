@@ -38,22 +38,25 @@ public class SimpleStreamApplication {
 		
 		//read in command line args to variables
 		readCommandLineArgs(args);
-		
+	
+		Out.printHeading(Settings.APP_NAME + " " + Settings.APP_VERSION);
+
 		//set localMode on or off depending on the command line arg, -remote
 		setMode();
 		
-		Out.printHeading(Settings.APP_NAME + " " + Settings.APP_VERSION);
-
 		
+		//TODO: Start the server in a new thread
+		//TODO: when you get a connection, start a new thread and send them messages
 		
-		//Start the server
-		
-		if(localMode) {
+		//TODO: stream from local camera if in local mode
+		if (localMode) {
+			
 			//Show the local image viewer
 			LocalView localView = new LocalView();
 			localView.start();
 		}
-
+		//TODO: else connect to remote host, and send them messages
+		
 	}
 
 	
@@ -63,7 +66,7 @@ public class SimpleStreamApplication {
 	 * 
 	 * On error the system will exit.
 	 */
-	private void readCommandLineArgs(String[] args){
+	private void readCommandLineArgs(String[] args) {
 		CmdLineParser parser = new CmdLineParser(this);
 		try {
             // parse the arguments.

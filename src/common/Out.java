@@ -10,12 +10,13 @@ package common;
 public class Out {
 
 	public static void print(String output){
-		if(Settings.VERBOSE)
+		if(Settings.VERBOSE) {
 			System.out.println("**" + output);
+		}
 	}
 	
 	public static void printHeading(String output){
-		if(Settings.VERBOSE){
+		if(Settings.VERBOSE) {
 			System.out.println("******************************");
 			System.out.println("**" + output + "**");
 			System.out.println("******************************");
@@ -25,7 +26,7 @@ public class Out {
 	/**
 	 * Error messages are always printed, regardless of the verbose flag
 	 */
-	public static void error(String output){
+	public static void error(String output) {
 		System.out.println("**ERROR: " + output);
 	}
 }

@@ -29,7 +29,7 @@
     
     <target name="run" depends="create_run_jar">
 		<java jar="SimpleStreamer.jar" fork="true">
-		  <arg line="-remote localhost" />
+		  <!-- <arg line="-remote localhost" /> -->
 		</java>
 	</target>
 	

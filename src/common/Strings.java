@@ -10,7 +10,26 @@ public class Strings {
 	 */
 	
 	public static final String EMPTY_REMOTE_HOSTNAME = "NO_REMOTE_HOST";
-		
+
+	/**
+	 * Protocol Strings
+	 * 
+	 * These are strings used throughout the JSON Message Protocol.
+	 * 
+	 */
+	
+	public static final String CLIENTS_JSON = "clients";	
+	public static final String SERVER_JSON = "server";	
+	public static final String RATELIMIT_JSON = "ratelimit";
+	public static final String RATELIMITING_JSON = "ratelimiting";
+	public static final String DATA_JSON = "data";
+	public static final String STREAMING_JSON = "streaming";
+	public static final String HANDOVER_JSON = "handover";
+	public static final String IP_JSON = "ip";	
+	public static final String PORT_JSON = "port";	
+	
+	
+	
 	/**
 	 * Message Types Strings
 	 * 
@@ -27,4 +46,5 @@ public class Strings {
 	public static final String IMAGE_RESONSE_MESSAGE = "image";
 	public static final String STOP_REQUEST_MESSAGE = "stopstream";
 	public static final String STOPPED_RESPONSE_MESSAGE = "stoppedstream";
+	public static final String OVERLOADED_RESPONSE_MESSAGE = "overloaded";
 }
