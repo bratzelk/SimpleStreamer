@@ -1,7 +1,10 @@
 package simplestream;
 
+
+
 import org.kohsuke.args4j.*;
 import common.*;
+import messages.*;
 
 
 public class SimpleStreamApplication {
@@ -28,13 +31,14 @@ public class SimpleStreamApplication {
 	
 	/**
 	 * @param args
+	 * @throws MessageNotFoundException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws MessageNotFoundException {
 		
 		new SimpleStreamApplication().runMain(args);
 	}
 	
-	private void runMain(String[] args) {
+	private void runMain(String[] args) throws MessageNotFoundException {
 		
 		//read in command line args to variables
 		readCommandLineArgs(args);
@@ -45,18 +49,30 @@ public class SimpleStreamApplication {
 		setMode();
 		
 		
-		//TODO: Start the server in a new thread
-		//TODO: when you get a connection, start a new thread and send them messages
+		OverloadedResponseMessage overloadedMessage = (OverloadedResponseMessage)MessageFactory.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
+		//overloadedMessage.addServer(remoteServer);
+		//overloadedMessage.addClients(clients);
+		Out.print(overloadedMessage.toJSON());
+		
+		
+		
+		//TODO: Start the server in a new thread.
+		//TODO: when you get a connection, start a new thread and send them messages.
 		
 		//TODO: stream from local camera if in local mode
 		if (localMode) {
 			
-			//Show the local image viewer
+			//TODO: Show the local image viewer properly, this was just his code.
 			LocalView localView = new LocalView();
 			localView.start();
 		}
-		//TODO: else connect to remote host, and send them messages
+		//TODO: else connect to remote host, and send them messages.
+		else {
+			//This needs to be added to the overloadedMessage.
+			Peer remoteServer = new Peer(hostname, remotePort);
+		}
 		
+				
 	}
 
 	
@@ -69,11 +85,10 @@ public class SimpleStreamApplication {
 	private void readCommandLineArgs(String[] args) {
 		CmdLineParser parser = new CmdLineParser(this);
 		try {
-            // parse the arguments.
+            //parse the arguments.
             parser.parseArgument(args);
-
         } catch( CmdLineException e ) {
-            // if there's a problem in the args
+            //if there's a problem with the args.
             Out.error(e.getMessage());
             Out.error("Usage is: java -jar SimpleStreamer.jar [-sport X] [-remote hostname [-rport Y]] [-rate Z]");
             parser.printUsage(System.err);
@@ -82,7 +97,7 @@ public class SimpleStreamApplication {
 	}
 	
 	private void setMode() {
-		//if the remote flag was not set then we need to make sure that we set local mode on
+		//if the remote flag was not set then we need to make sure that we set local mode to on.
 		if(this.hostname.equals(Strings.EMPTY_REMOTE_HOSTNAME)) {
 			setLocalMode();
 		}

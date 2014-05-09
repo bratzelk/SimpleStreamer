@@ -31,10 +31,20 @@ public class OverloadedResponseMessage extends ResponseMessage {
 	public String getType() {
 		return Strings.OVERLOADED_RESPONSE_MESSAGE;
 	}
-	
+
+	/**
+	 * Optionally add in the current server you are connected to (if it exists)
+	 * */
 	public void addServer(Peer server) {
 		this.connectedServer = server;
 		this.inRemoteMode = true;
+	}
+
+	/**
+	 * Add in the list of connected clients
+	 * */
+	public void addClients(List<Peer> clients) {
+		this.connectedClients.addAll(clients);
 	}
 	
 	@SuppressWarnings("unchecked")

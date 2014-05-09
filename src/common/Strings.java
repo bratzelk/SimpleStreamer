@@ -18,6 +18,9 @@ public class Strings {
 	 * 
 	 */
 	
+	public static final String LOCAL_STREAMING_TYPE_JSON = "local";	
+	public static final String REMOTE_STREAMING_TYPE_JSON = "remote";	
+	
 	public static final String CLIENTS_JSON = "clients";	
 	public static final String SERVER_JSON = "server";	
 	public static final String RATELIMIT_JSON = "ratelimit";
@@ -27,6 +30,9 @@ public class Strings {
 	public static final String HANDOVER_JSON = "handover";
 	public static final String IP_JSON = "ip";	
 	public static final String PORT_JSON = "port";	
+	
+	public static final String YES_JSON = "yes";
+	public static final String NO_JSON = "no";	
 	
 	
 	

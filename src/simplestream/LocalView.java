@@ -15,11 +15,22 @@ public class LocalView {
 	Viewer myViewer;
 	JFrame frame;
 	
+	byte[] rawImageData;
+	
 	public LocalView() {
 		
 		myViewer = new Viewer();
 		frame = new JFrame("Simple Stream Viewer");
 		
+	}
+	
+	
+	private void setImageData(byte[] rawImageData) {
+		this.rawImageData = rawImageData;
+	}
+	
+	public byte[] setImageData() {
+		return this.rawImageData;
 	}
 	
 	public void start() {
@@ -57,21 +68,27 @@ public class LocalView {
 			grabber.nextFrame();
 			/* Get the raw bytes of the frame. */
 			byte[] raw_image=grabber.getImage().getBytes(320 * 240 * 3);
+			
+			
+			//Set the raw image data so that it is publicly available
+			setImageData(raw_image);
+			
+			
+			//TODO: Remove this and do the compression externally
+			
 			/* Apply a crude kind of image compression. */
 			byte[] compressed_image = Compressor.compress(raw_image);
 			/* Prepare the date to be sent in a text friendly format. */
 			byte[] base64_image = Base64.encodeBase64(compressed_image);
-			/*
-			 * The image data can be sent to connected clients.
-			 */
+
 			
-			/*
-			 * Assume we received some image data.
-			 * Remove the text friendly encoding.
-			 */
+			//TODO: Remove this and do the de-compression externally
+			
 			byte[] nobase64_image = Base64.decodeBase64(base64_image);
 			/* Decompress the image */
 			byte[] decompressed_image = Compressor.decompress(nobase64_image);
+			
+			
 			/* Give the raw image bytes to the viewer. */
 			myViewer.ViewerInput(decompressed_image);
 			frame.repaint();

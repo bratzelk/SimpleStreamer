@@ -34,6 +34,7 @@ public class Settings {
 	public static final Boolean SHOW_GUI = true;
 	
 	public static final int MAX_CONNECTIONS = 3;
+
 	
 	/**
 	 * Systems Settings
