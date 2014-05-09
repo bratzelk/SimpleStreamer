@@ -32,13 +32,14 @@ public class SimpleStreamApplication {
 	/**
 	 * @param args
 	 * @throws MessageNotFoundException 
+	 * @throws InterruptedException 
 	 */
-	public static void main(String[] args) throws MessageNotFoundException {
+	public static void main(String[] args) throws MessageNotFoundException, InterruptedException {
 		
 		new SimpleStreamApplication().runMain(args);
 	}
 	
-	private void runMain(String[] args) throws MessageNotFoundException {
+	private void runMain(String[] args) throws MessageNotFoundException, InterruptedException {
 		
 		//read in command line args to variables
 		readCommandLineArgs(args);
@@ -47,13 +48,7 @@ public class SimpleStreamApplication {
 
 		//set localMode on or off depending on the command line arg, -remote
 		setMode();
-		
-		
-		OverloadedResponseMessage overloadedMessage = (OverloadedResponseMessage)MessageFactory.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
-		//overloadedMessage.addServer(remoteServer);
-		//overloadedMessage.addClients(clients);
-		Out.print(overloadedMessage.toJSON());
-		
+			
 		
 		
 		//TODO: Start the server in a new thread.
@@ -62,14 +57,33 @@ public class SimpleStreamApplication {
 		//TODO: stream from local camera if in local mode
 		if (localMode) {
 			
-			//TODO: Show the local image viewer properly, this was just his code.
-			LocalView localView = new LocalView();
-			localView.start();
+			//TODO: Show the local image viewer.
+			StreamViewer viewer = new StreamViewer();
+			Webcam webcam = new Webcam();
+			
+			
+			//TODO: nice exit from this loop.
+			while(true) {
+				byte[] imageData = webcam.getImage();
+				viewer.addImage(imageData);	
+				Thread.sleep(streamingRate);
+			}
+			
 		}
 		//TODO: else connect to remote host, and send them messages.
 		else {
 			//This needs to be added to the overloadedMessage.
 			Peer remoteServer = new Peer(hostname, remotePort);
+			
+			
+			//TODO: This is an example message
+			OverloadedResponseMessage overloadedMessage = (OverloadedResponseMessage)MessageFactory.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
+			overloadedMessage.addServer(remoteServer);
+			//overloadedMessage.addClients(clients);
+			Out.print(overloadedMessage.toJSON());
+			
+			//TODO: The messages themselves don't compress any byte arrays.
+			//You need to do this explicitly before adding the data to a message.
 		}
 		
 				

@@ -7,6 +7,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.IOUtils;
+
+import common.Out;
 public class Compressor{
     public static byte[] compress(byte[] content){
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -17,7 +19,7 @@ public class Compressor{
         } catch(IOException e){
             throw new RuntimeException(e);
         }
-        System.out.printf("Compression ratio %f\n", (1.0f * content.length/byteArrayOutputStream.size()));
+        Out.print(String.format("Compression ratio %f\n", (1.0f * content.length/byteArrayOutputStream.size())));
         return byteArrayOutputStream.toByteArray();
     }
 

@@ -10,33 +10,30 @@ import javax.swing.JFrame;
  * It may require some changes...
  * */
 
-public class RemoteView {
+public class StreamViewer {
 	
 	Viewer myViewer;
 	JFrame frame;
 	
-	public RemoteView() {
+	public StreamViewer() {
 		
 		myViewer = new Viewer();
 		frame = new JFrame("Simple Stream Viewer");
 		
-	}
-	
-	public void start() {
-
 		frame.setVisible(true);
 		frame.setSize(320, 240);
 		
-		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(myViewer);		
+		frame.add(myViewer);
+		
 	}
+
 	
 	/**
 	 * Add a frame which is displayed by the viewer
 	 * This data should be de-compressed etc and ready to be viewed.
 	 * */
-	public void addFrame(byte[] imageData) {
+	public void addImage(byte[] imageData) {
 		myViewer.ViewerInput(imageData);
 		frame.repaint();
 	}

@@ -2,6 +2,7 @@ package messages;
 
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import common.Strings;
 
@@ -35,5 +36,27 @@ public class ImageResponseMessage extends ResponseMessage {
 		
 		return jsonMessage.toJSONString();
 	}
+	
+	
+	public byte[] imagedataFromJSON(String jsonMessageString) {
+		
+		JSONParser parser = new JSONParser();
+		JSONObject jsonMessage = null;
+		
+		byte[] base64ImageData = null;
+		
+		try {
+			jsonMessage = (JSONObject) parser.parse(jsonMessageString);
+		} catch (org.json.simple.parser.ParseException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		if(jsonMessage != null) {
+			base64ImageData = (byte[]) jsonMessage.get(Strings.DATA_JSON);
+		}
+		return base64ImageData;
+		
+	}
+
 
 }
