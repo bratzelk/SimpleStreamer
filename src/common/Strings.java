@@ -30,6 +30,7 @@ public class Strings {
 	public static final String HANDOVER_JSON = "handover";
 	public static final String IP_JSON = "ip";	
 	public static final String PORT_JSON = "port";	
+	public static final String SPORT_JSON = "sport";	
 	
 	public static final String YES_JSON = "yes";
 	public static final String NO_JSON = "no";	
