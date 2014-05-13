@@ -1,7 +1,15 @@
 package simplestream;
 
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 
 /**
@@ -26,8 +34,23 @@ public class StreamViewer {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(myViewer);
 		
+
+		//Attach a listener for the Enter key to shutdown the program.
+		myViewer.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "shutdownAction");
+		myViewer.getActionMap().put("shutdownAction", shutdownAction);
 	}
 
+	
+	//TODO: Actually send the shutdown message
+	//This action is run when the user inputs the shutdown command (enter key).
+	@SuppressWarnings("serial")
+	Action shutdownAction = new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(frame, "Sending shutdown message...");
+            //TODO: Actually send the shutdown message
+        }
+    };
+    
 	
 	/**
 	 * Add a frame which is displayed by the viewer
@@ -39,4 +62,5 @@ public class StreamViewer {
 	}
 	
 
+	
 }

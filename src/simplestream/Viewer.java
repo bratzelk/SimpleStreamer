@@ -34,6 +34,7 @@ public class Viewer extends JPanel{
         super.paintComponent(g);
         g.drawImage(image, 0, 0, null); // see javadoc for more info on the parameters            
     }
+    
 
 }
 

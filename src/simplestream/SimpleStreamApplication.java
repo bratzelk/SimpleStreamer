@@ -1,7 +1,6 @@
 package simplestream;
 
 
-
 import org.kohsuke.args4j.*;
 import common.*;
 import messages.*;
@@ -54,11 +53,17 @@ public class SimpleStreamApplication {
 		//TODO: Start the server in a new thread.
 		//TODO: when you get a connection, start a new thread and send them messages.
 		
+		
+		//TODO: Listen for user input, when a user presses enter send a shutdown request.
+		
+		
 		//TODO: stream from local camera if in local mode
 		if (localMode) {
 			
 			//TODO: Show the local image viewer.
+			//TODO: The StreamViewer currently listens for the enter key. It doesn't do anything when it catches the event yet. This needs to be implemented.
 			StreamViewer viewer = new StreamViewer();
+			
 			Webcam webcam = new Webcam();
 			
 			
@@ -128,5 +133,7 @@ public class SimpleStreamApplication {
 		this.localMode = true;
 		Out.print("Running in Local Mode");
 	}
+	
+
 
 }
