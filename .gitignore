@@ -11,3 +11,14 @@
 *.DS_Store
 *.swp
 *.out
+
+# Eclipse/Maven
+.classpath
+.project
+.settings
+.sonar
+*.log
+*.log.gz
+/dependency-reduced-pom.xml
+/target
+/bin
