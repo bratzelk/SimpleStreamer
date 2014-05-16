@@ -1,5 +1,7 @@
 package simplestream.client;
 
+import common.Out;
+
 import simplestream.StreamViewer;
 import simplestream.Webcam;
 
@@ -24,6 +26,7 @@ public class LocalWebcamStreamer implements WebcamStreamer {
 		// catches the event yet. This needs to be implemented.
 		viewer = new StreamViewer();
 		webcam = new Webcam();
+		Out.print("Receiving local webcam stream");
 
 		// TODO: nice exit from this loop.
 		while (true) {

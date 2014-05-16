@@ -12,4 +12,14 @@ public interface WebcamStreamer {
 	 */
 	public byte[] getFrame();
 
+	/**
+	 * Initializes the streamer.
+	 */
+	public void init();
+
+	/**
+	 * Stops the streamer from updating.
+	 */
+	public void stop();
+
 }

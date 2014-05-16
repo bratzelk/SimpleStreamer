@@ -1,8 +1,7 @@
-package simplestream;
+package simplestream.app;
 
 
 import java.io.IOException;
-import java.net.Socket;
 
 import messages.MessageNotFoundException;
 
@@ -11,12 +10,9 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
-import simplestream.client.RemoteWebcamStreamer;
-import simplestream.client.LocalWebcamStreamer;
-import au.edu.unimelb.orlade.comp90015.filesync.ConnectionBuffer;
-import au.edu.unimelb.orlade.comp90015.filesync.ConnectionBuffer.Response;
-import au.edu.unimelb.orlade.comp90015.filesync.server.ConnectionListener;
-import au.edu.unimelb.orlade.comp90015.filesync.server.ConnectionListener.Callback;
+import simplestream.client.StreamClient;
+import simplestream.server.StreamServer;
+
 import common.Out;
 import common.Settings;
 import common.Strings;
@@ -24,8 +20,7 @@ import common.Strings;
 
 public class SimpleStreamApplication {
 
-	/** Whether the application is running in local (true) or remote (false) mode. */
-	private Boolean localMode = true;
+	private Logger log = Logger.getLogger(getClass());
 
 	// Setup the command line arguments and their default values
 
@@ -42,7 +37,8 @@ public class SimpleStreamApplication {
 	@Option(name = "-rate", usage = "Streaming Rate")
 	private int streamingRate = Settings.DEFAULT_STREAMING_RATE;
 
-	private Logger log = Logger.getLogger(getClass());
+	private StreamServer server;
+	private StreamClient client;
 
 	/**
 	 * @param args
@@ -59,22 +55,16 @@ public class SimpleStreamApplication {
 
 		Out.printHeading(Settings.APP_NAME + " " + Settings.APP_VERSION);
 
-		// set localMode on or off depending on the command line arg, -remote
-		setMode();
+		client = new StreamClient(streamingRate, isLocal());
 
-		if (localMode) {
-			new LocalWebcamStreamer(streamingRate).init();
-		} else {
-			new RemoteWebcamStreamer(streamingRate, hostname, remotePort).init();
-		}
-
+		server = new StreamServer(streamingPort);
 
 		// TODO: Listen for user input, when a user presses enter send a shutdown request.
 	}
 
 	public void stop() throws IOException {
 		log.debug("Stopping server...");
-		listener.close();
+
 	}
 
 	/**
@@ -96,23 +86,11 @@ public class SimpleStreamApplication {
 		}
 	}
 
-	private void setMode() {
-		// if the remote flag was not set then we need to make sure that we set local mode to on.
-		if (this.hostname.equals(Strings.EMPTY_REMOTE_HOSTNAME)) {
-			setLocalMode();
-		} else {
-			setRemoteMode();
-		}
-	}
-
-	private void setRemoteMode() {
-		this.localMode = false;
-		Out.print("Running in Remote Mode");
-	}
-
-	private void setLocalMode() {
-		this.localMode = true;
-		Out.print("Running in Local Mode");
+	/**
+	 * The app is considered to be in local mode if the remote flag was not set.
+	 */
+	private boolean isLocal() {
+		return this.hostname.equals(Strings.EMPTY_REMOTE_HOSTNAME);
 	}
 
 }

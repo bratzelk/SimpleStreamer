@@ -1,4 +1,4 @@
-package au.edu.unimelb.orlade.comp90015.filesync.server;
+package simplestream.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;

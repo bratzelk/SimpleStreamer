@@ -1,9 +1,19 @@
 package simplestream.client;
 
-import simplestream.Peer;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import messages.Message;
 import messages.MessageFactory;
 import messages.MessageNotFoundException;
 import messages.OverloadedResponseMessage;
+
+import org.apache.log4j.Logger;
+
+import simplestream.Peer;
+import simplestream.server.ConnectionBuffer;
+import simplestream.server.ConnectionBuffer.Response;
 import common.Out;
 import common.Strings;
 
@@ -11,6 +21,8 @@ import common.Strings;
  * Displays a webcam stream from a remote camera.
  */
 public class RemoteWebcamStreamer extends LocalWebcamStreamer {
+
+	Logger log = Logger.getLogger(getClass());
 
 	private final String remoteHostname;
 	private final int remotePort;
@@ -24,6 +36,8 @@ public class RemoteWebcamStreamer extends LocalWebcamStreamer {
 	public void init() {
 		// This needs to be added to the overloadedMessage.
 		Peer remoteServer = new Peer(remoteHostname, remotePort);
+		new ConnectionBuffer(socket);
+		Out.print("Receiving remote webcam stream");
 
 		// TODO: This is an example message
 		try {
@@ -43,8 +57,26 @@ public class RemoteWebcamStreamer extends LocalWebcamStreamer {
 		// TODO: display remote stream.
 	}
 
-	@Override
-	public byte[] getFrame() {
+	/**
+	 * Create a socket to connect to the server.
+	 */
+	protected Socket bind(final String serverHostname, final int port) throws UnknownHostException,
+			IOException {
+		Socket socket = new Socket(serverHostname, port);
+		log.debug("Established connection to " + serverHostname + ":" + port);
+
+		// Establish the direction of the connection.
+		// final String serverDirection = direction.equals("push") ? "pull" : "push";
+		// ConfigInstruction config = new ConfigInstruction(serverDirection, blockSize);
+		Message startMessage = MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
+		String response = new ConnectionBuffer(socket).send(startMessage.toJSON());
+		if (response != Response.ACKNOWLEDGED) {
+			throw new RuntimeException("Failed to negotiate direction");
+		}
+		return socket;
 	}
+
+	@Override
+	public byte[] getFrame() {}
 
 }

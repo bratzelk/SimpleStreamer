@@ -1,4 +1,4 @@
-package au.edu.unimelb.orlade.comp90015.filesync;
+package simplestream.server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
