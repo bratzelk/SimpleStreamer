@@ -9,19 +9,18 @@ import java.net.UnknownHostException;
 
 import javax.annotation.Resources;
 
+import messages.Message;
+
 import org.apache.log4j.Logger;
 
+import simplestream.Peer;
+
 /**
- * Handles file sync changes.
+ * Sends and receives messages between hosts.
  */
-public class ConnectionBuffer extends Thread {
+public class ConnectionBuffer {
 
-	Logger log = Logger.getLogger(getClass());
-
-	/** The possible simple response messages from the server. */
-	public enum Response {
-		ACKNOWLEDGED, NEED_BLOCK, ERROR
-	}
+	private static final Logger log = Logger.getLogger(ConnectionBuffer.class);
 
 	private final Socket socket;
 
@@ -35,13 +34,26 @@ public class ConnectionBuffer extends Thread {
 	}
 
 	/**
+	 * Create a socket to connect to the server.
+	 */
+	public static ConnectionBuffer bind(Peer remoteServer) throws IOException {
+		Socket socket = new Socket(remoteServer.getHostname(), remoteServer.getPort());
+		ConnectionBuffer buffer = new ConnectionBuffer(socket);
+		log.debug(buffer + " Established connection to " + remoteServer.getHostname() + ":"
+						+ remoteServer.getPort());
+		return buffer;
+	}
+
+	/**
 	 * Reads in request data from the input stream of the socket.
 	 *
 	 * @return The contents of the request message.
 	 * @throws IOException
 	 */
 	public String receive() throws IOException {
-		return in.readUTF();
+		String response = in.readUTF();
+		log.debug(this + " Received response: " + response);
+		return response;
 	}
 
 	/**
@@ -55,23 +67,32 @@ public class ConnectionBuffer extends Thread {
 	}
 
 	/**
+	 * Sends a message without waiting for a response.
+	 *
+	 * @param message The message to send.
+	 * @throws IOException
+	 */
+	public void send(String message) throws IOException {
+		// Send the message.
+		log.debug(this + " Sending data: " + message);
+		out.writeUTF(message);
+	}
+
+	/**
 	 * Sends a message via the socket.
 	 *
 	 * @param message The message to send.
 	 * @return The response received.
 	 */
-	public String send(String message) {
+	public String sendAndReceive(String message) {
 		try {
 			// Send the message.
-			log.debug("Sending data: " + message);
-			out.writeUTF(message);
-
+			send(message);
 			// Receive the response.
-			String response = in.readUTF();
-			if (response.equals(Response.ERROR)) {
+			String response = receive();
+			if (response.equals("ERROR")) {
 				throw new RuntimeException("Server failed to handle message:" + message);
 			}
-			log.debug("Received response: " + response);
 			return response;
 		} catch (UnknownHostException e) {
 			log.error("Failed to send/receive message", e);
@@ -80,7 +101,17 @@ public class ConnectionBuffer extends Thread {
 		} catch (IOException e) {
 			log.error("Failed to send/receive message", e);
 		}
-		return Response.ERROR.toString();
+		return "ERROR";
+	}
+
+	/**
+	 * Serializes and sends the given message.
+	 *
+	 * @param message The {@link Message} to send.
+	 * @return The response received.
+	 */
+	public String sendAndReceive(Message message) {
+		return sendAndReceive(message.toJSON());
 	}
 
 	/**
@@ -90,6 +121,11 @@ public class ConnectionBuffer extends Thread {
 	 */
 	public void close() throws IOException {
 		socket.close();
+	}
+
+	@Override
+	public String toString() {
+		return "ConnectionBuffer[" + socket.getLocalAddress() + ":" + socket.getLocalPort() + "]";
 	}
 
 }

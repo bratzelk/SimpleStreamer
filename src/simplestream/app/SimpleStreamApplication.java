@@ -3,8 +3,6 @@ package simplestream.app;
 
 import java.io.IOException;
 
-import messages.MessageNotFoundException;
-
 import org.apache.log4j.Logger;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -45,26 +43,28 @@ public class SimpleStreamApplication {
 	 * @throws MessageNotFoundException
 	 * @throws InterruptedException
 	 */
-	public static void main(String[] args) throws MessageNotFoundException, InterruptedException {
-		new SimpleStreamApplication().runMain(args);
+	public static void main(String[] args) {
+		SimpleStreamApplication instance = new SimpleStreamApplication();
+		instance.readCommandLineArgs(args);
+		instance.init();
+		// TODO: Listen for user input, when a user presses enter send a shutdown request.
 	}
 
-	private void runMain(String[] args) throws MessageNotFoundException, InterruptedException {
-		// read in command line args to variables
-		readCommandLineArgs(args);
-
+	/**
+	 * Sets up the client and server components. All command line arguments should have been parsed.
+	 */
+	public void init() {
 		Out.printHeading(Settings.APP_NAME + " " + Settings.APP_VERSION);
-
-		client = new StreamClient(streamingRate, isLocal());
-
 		server = new StreamServer(streamingPort);
-
-		// TODO: Listen for user input, when a user presses enter send a shutdown request.
+		if (isLocal()) {
+			client = new StreamClient(streamingRate);
+		} else {
+			client = new StreamClient(streamingRate, hostname, remotePort);
+		}
 	}
 
 	public void stop() throws IOException {
 		log.debug("Stopping server...");
-
 	}
 
 	/**

@@ -7,29 +7,33 @@ package simplestream.client;
 public class StreamClient implements Runnable {
 
 	private int streamingRate;
-	private boolean localMode;
 
 	/** The current client stream manager. */
 	private WebcamStreamer streamer;
 
-	public StreamClient(int streamingRate, boolean localMode) {
-		this.localMode = localMode;
+	/**
+	 * Remote stream constructor.
+	 */
+	public StreamClient(int streamingRate, String hostname, int remotePort) {
 		this.streamingRate = streamingRate;
+		switchToRemote(hostname, remotePort);
 	}
 
 	/**
 	 * Constructs a {@link StreamClient} in the default local mode.
 	 */
 	public StreamClient(int streamingRate) {
-		this(streamingRate, true);
+		this.streamingRate = streamingRate;
+		switchToLocal();
 	}
+
+	@Override
+	public void run() {}
 
 	/**
 	 * Begins receiving webcam data from the local webcam, if not doing so already.
 	 */
 	protected void switchToLocal() {
-		if (localMode) return;
-
 		killStreamer();
 		streamer = new LocalWebcamStreamer(streamingRate);
 		streamer.init();
@@ -54,14 +58,6 @@ public class StreamClient implements Runnable {
 		if (streamer != null) {
 			streamer.stop();
 		}
-	}
-
-	public boolean isLocalMode() {
-		return localMode;
-	}
-
-	public void setLocalMode(boolean localMode) {
-		this.localMode = localMode;
 	}
 
 	public int getStreamingRate() {

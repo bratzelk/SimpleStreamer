@@ -6,14 +6,13 @@ import java.net.UnknownHostException;
 
 import messages.Message;
 import messages.MessageFactory;
-import messages.MessageNotFoundException;
 import messages.OverloadedResponseMessage;
+import messages.StartRequestMessage;
 
 import org.apache.log4j.Logger;
 
 import simplestream.Peer;
 import simplestream.server.ConnectionBuffer;
-import simplestream.server.ConnectionBuffer.Response;
 import common.Out;
 import common.Strings;
 
@@ -27,6 +26,10 @@ public class RemoteWebcamStreamer extends LocalWebcamStreamer {
 	private final String remoteHostname;
 	private final int remotePort;
 
+	private byte[] currentFrame;
+
+	private ConnectionBuffer buffer;
+
 	public RemoteWebcamStreamer(int streamingRate, String remoteHostname, int remotePort) {
 		super(streamingRate);
 		this.remoteHostname = remoteHostname;
@@ -36,20 +39,32 @@ public class RemoteWebcamStreamer extends LocalWebcamStreamer {
 	public void init() {
 		// This needs to be added to the overloadedMessage.
 		Peer remoteServer = new Peer(remoteHostname, remotePort);
-		new ConnectionBuffer(socket);
+		try {
+			buffer = ConnectionBuffer.bind(remoteServer);
+			String statusMessage = buffer.receive();
+			// TODO(orlade): Check status.
+		} catch (IOException e) {
+			throw new IllegalStateException("Unable to connect to remote host: " + remoteServer);
+		}
 		Out.print("Receiving remote webcam stream");
 
-		// TODO: This is an example message
+		// Start streaming from the remote host.
+		Message startMessage = MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
+		String response = buffer.sendAndReceive(startMessage);
+
 		try {
-			OverloadedResponseMessage overloadedMessage =
-					(OverloadedResponseMessage) MessageFactory
-							.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
-			overloadedMessage.addServer(remoteServer);
-			// overloadedMessage.addClients(clients);
-			Out.print(overloadedMessage.toJSON());
-		} catch (MessageNotFoundException e) {
-			throw new IllegalArgumentException("Overloaded message unknown", e);
+			listen();
+		} catch (IOException e) {
+			log.error("Connection problem with remote host: " + remoteServer, e);
 		}
+
+		// // TODO: This is an example message
+		// OverloadedResponseMessage overloadedMessage =
+		// (OverloadedResponseMessage) MessageFactory
+		// .createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
+		// overloadedMessage.addServer(remoteServer);
+		// // overloadedMessage.addClients(clients);
+		// Out.print(overloadedMessage.toJSON());
 
 		// TODO: The messages themselves don't compress any byte arrays.
 		// You need to do this explicitly before adding the data to a message.
@@ -58,25 +73,22 @@ public class RemoteWebcamStreamer extends LocalWebcamStreamer {
 	}
 
 	/**
-	 * Create a socket to connect to the server.
+	 * Waits and receives streaming messages from the remote host.
+	 *
+	 * @throws IOException
 	 */
-	protected Socket bind(final String serverHostname, final int port) throws UnknownHostException,
-			IOException {
-		Socket socket = new Socket(serverHostname, port);
-		log.debug("Established connection to " + serverHostname + ":" + port);
-
-		// Establish the direction of the connection.
-		// final String serverDirection = direction.equals("push") ? "pull" : "push";
-		// ConfigInstruction config = new ConfigInstruction(serverDirection, blockSize);
-		Message startMessage = MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
-		String response = new ConnectionBuffer(socket).send(startMessage.toJSON());
-		if (response != Response.ACKNOWLEDGED) {
-			throw new RuntimeException("Failed to negotiate direction");
+	protected void listen() throws IOException {
+		while (true) {
+			String incoming = buffer.receive();
 		}
-		return socket;
 	}
 
+	/**
+	 * Retrieve the next frame from the remote host.
+	 */
 	@Override
-	public byte[] getFrame() {}
+	public byte[] getFrame() {
+		return currentFrame;
+	}
 
 }

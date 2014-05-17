@@ -3,44 +3,31 @@ package messages;
 import common.Strings;
 
 /**
- * @author Kim
- *
+ * Creates default {@link Message} objects of the given type.
  */
 public class MessageFactory {
 
-	private MessageFactory() {
-		
-	}
-	
-	public static Message createMessage(String messageType) throws MessageNotFoundException {
-		
-		//Let's ensure this string is always lowercase
-		String lowercaseMessageType = messageType.toLowerCase();
-		
-		if(lowercaseMessageType.equals(Strings.START_REQUEST_MESSAGE)) {
+	public static Message createMessage(String messageType) {
+		// Ensure this string is always lowercase.
+		messageType = messageType.toLowerCase();
+
+		if (messageType.equals(Strings.START_REQUEST_MESSAGE)) {
 			return new StartRequestMessage();
-		}
-		else if(lowercaseMessageType.equals(Strings.START_RESONSE_MESSAGE)) {
+		} else if (messageType.equals(Strings.START_RESONSE_MESSAGE)) {
 			return new StartResponseMessage();
-		}
-		else if(lowercaseMessageType.equals(Strings.STATUS_RESONSE_MESSAGE)) {
+		} else if (messageType.equals(Strings.STATUS_RESONSE_MESSAGE)) {
 			return new StatusResponseMessage();
-		}
-		else if(lowercaseMessageType.equals(Strings.IMAGE_RESONSE_MESSAGE)) {
+		} else if (messageType.equals(Strings.IMAGE_RESONSE_MESSAGE)) {
 			return new ImageResponseMessage();
-		}
-		else if(lowercaseMessageType.equals(Strings.STOP_REQUEST_MESSAGE)) {
+		} else if (messageType.equals(Strings.STOP_REQUEST_MESSAGE)) {
 			return new StopRequestMessage();
-		}
-		else if(lowercaseMessageType.equals(Strings.STOPPED_RESPONSE_MESSAGE)) {
+		} else if (messageType.equals(Strings.STOPPED_RESPONSE_MESSAGE)) {
 			return new StoppedResponseMessage();
-		}
-		else if(lowercaseMessageType.equals(Strings.OVERLOADED_RESPONSE_MESSAGE)) {
+		} else if (messageType.equals(Strings.OVERLOADED_RESPONSE_MESSAGE)) {
 			return new OverloadedResponseMessage();
+		} else {
+			throw new IllegalArgumentException("Unknown message type: " + messageType);
 		}
-		else {
-			throw new MessageNotFoundException();
-		}
-		
 	}
+
 }

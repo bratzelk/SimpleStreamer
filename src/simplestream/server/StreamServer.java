@@ -5,12 +5,12 @@ import java.net.Socket;
 
 import messages.Message;
 import messages.MessageFactory;
-import messages.MessageNotFoundException;
 import messages.StatusResponseMessage;
 
 import org.apache.log4j.Logger;
 
 import simplestream.server.ConnectionListener.Callback;
+
 import common.Strings;
 
 /**
@@ -26,7 +26,6 @@ public class StreamServer {
 	 * The callback to invoke when a new client connection is received.
 	 */
 	private final Callback clientConnectionCallback = new Callback() {
-
 		/**
 		 * Handle new requests by responding with a {@link StatusResponseMessage}.
 		 */
@@ -34,18 +33,18 @@ public class StreamServer {
 		public void onRequest(final Socket clientSocket) {
 			try {
 				ConnectionBuffer buffer = new ConnectionBuffer(clientSocket);
-				Message statusMessage = MessageFactory.createMessage(Strings.STATUS_RESONSE_MESSAGE);
+				Message statusMessage =
+								MessageFactory.createMessage(Strings.STATUS_RESONSE_MESSAGE);
 				buffer.send(statusMessage.toJSON());
 			} catch (IOException e) {
 				throw new IllegalStateException("Failed to connect with client", e);
-			} catch (MessageNotFoundException e) {
-				throw new IllegalStateException("Unable to respond to new connection", e);
 			}
 		}
 	};
 
 	/**
 	 * Wraps a connection listener on a new thread that
+	 *
 	 * @param streamingPort The port to stream
 	 */
 	public StreamServer(int streamingPort) {
