@@ -4,9 +4,6 @@ import java.io.IOException;
 
 import messages.Message;
 import messages.MessageFactory;
-
-import org.apache.log4j.Logger;
-
 import simplestream.Peer;
 import simplestream.server.ConnectionBuffer;
 
@@ -17,8 +14,6 @@ import common.Strings;
  * Displays a webcam stream from a remote camera.
  */
 public class RemoteWebcamStreamer extends WebcamStreamerImpl {
-
-	Logger log = Logger.getLogger(getClass());
 
 	private final String remoteHostname;
 	private final int remotePort;

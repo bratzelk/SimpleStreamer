@@ -1,7 +1,5 @@
 package simplestream.client;
 
-import simplestream.StreamViewer;
-
 import common.Out;
 
 /**
@@ -9,19 +7,12 @@ import common.Out;
  */
 public class LocalWebcamStreamer extends WebcamStreamerImpl {
 
-	/** The viewer in which to render the local webcam images. */
-	private StreamViewer viewer;
-
-	/** Whether to render the output of the local webcam. */
-	private boolean display;
-
 	public LocalWebcamStreamer(int streamingRate, boolean display) {
-		super(streamingRate);
-		setDisplay(display);
+		super(streamingRate, display);
 	}
 
 	public LocalWebcamStreamer(int streamingRate) {
-		this(streamingRate, true);
+		super(streamingRate);
 	}
 
 	public synchronized void init() {
@@ -40,7 +31,7 @@ public class LocalWebcamStreamer extends WebcamStreamerImpl {
 			} catch (InterruptedException e) {}
 
 			setCurrentFrame(getFrame());
-			if (display) {
+			if (isDisplaying()) {
 				displayFrame(getCurrentFrame());
 			}
 			try {
@@ -48,32 +39,6 @@ public class LocalWebcamStreamer extends WebcamStreamerImpl {
 			} catch (InterruptedException e) {
 				throw new RuntimeException("Local webcam streamer was interrupted", e);
 			}
-		}
-	}
-
-	/**
-	 * Displays an image in the viewer.
-	 *
-	 * @param imageData The image to display.
-	 */
-	public void displayFrame(byte[] imageData) {
-		viewer.addImage(imageData);
-	}
-
-	/**
-	 * Sets whether the display the local webcam on the local host or not. If so, a window is
-	 * created to render the images; otherwise any existing window is closed.
-	 *
-	 * @param display Whether to display the local images.
-	 */
-	public void setDisplay(boolean display) {
-		if (display == this.display) return;
-
-		this.display = display;
-		if (display) {
-			viewer = new StreamViewer();
-		} else {
-			viewer.close();
 		}
 	}
 

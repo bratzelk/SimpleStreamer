@@ -83,6 +83,7 @@ public class StreamServer {
 		}
 		ClientHandler client = new ClientHandler(buffer, webcam);
 		clients.add(client);
+		log.debug("Serving client " + buffer);
 	}
 
 	public void stop() {
