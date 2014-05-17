@@ -6,6 +6,11 @@ package simplestream.client;
 public interface WebcamStreamer {
 
 	/**
+	 * Initializes the streamer.
+	 */
+	public void init();
+
+	/**
 	 * Gets the next frame of webcam image data to display.
 	 *
 	 * @return The image data.
@@ -13,9 +18,9 @@ public interface WebcamStreamer {
 	public byte[] getFrame();
 
 	/**
-	 * Initializes the streamer.
+	 * Returns the rate at which new frames are streamed from the webcam (frames per second).
 	 */
-	public void init();
+	public int getStreamingRate();
 
 	/**
 	 * Stops the streamer from updating.

@@ -79,6 +79,16 @@ public class ConnectionBuffer {
 	}
 
 	/**
+	 * Sends a {@link Message} without waiting for a response.
+	 *
+	 * @param message The message to send.
+	 * @throws IOException
+	 */
+	public void send(Message message) throws IOException {
+		send(message.toJSON());
+	}
+
+	/**
 	 * Sends a message via the socket.
 	 *
 	 * @param message The message to send.

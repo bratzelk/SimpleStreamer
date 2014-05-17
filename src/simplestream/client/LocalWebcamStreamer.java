@@ -1,57 +1,54 @@
 package simplestream.client;
 
 import simplestream.StreamViewer;
-import simplestream.Webcam;
 
 import common.Out;
 
 /**
  * Displays a webcam stream from the default camera.
  */
-public class LocalWebcamStreamer implements WebcamStreamer {
+public class LocalWebcamStreamer extends WebcamStreamerImpl {
 
-	private int streamingRate;
-	private boolean running = true;
-
+	/** The viewer in which to render the local webcam images. */
 	private StreamViewer viewer;
-	private Webcam webcam;
+
+	/** Whether to render the output of the local webcam. */
+	private boolean display;
+
+	public LocalWebcamStreamer(int streamingRate, boolean display) {
+		super(streamingRate);
+		setDisplay(display);
+	}
 
 	public LocalWebcamStreamer(int streamingRate) {
-		this.streamingRate = streamingRate;
+		this(streamingRate, true);
 	}
 
 	public synchronized void init() {
 		// TODO: Show the local image viewer.
-		// TODO: The StreamViewer currently listens for the enter key. It doesn't do anything when it
+		// TODO: The StreamViewer currently listens for the enter key. It doesn't do anything when
+		// it
 		// catches the event yet. This needs to be implemented.
-		viewer = new StreamViewer();
-		webcam = new Webcam();
+		super.init();
 		Out.print("Receiving local webcam stream");
 
 		// TODO: nice exit from this loop.
 		while (true) {
 			// Pause activity if not running.
-			if (!running) try {
+			if (!isRunning()) try {
 				wait();
-			} catch (InterruptedException e1) {}
+			} catch (InterruptedException e) {}
 
-			displayFrame(getFrame());
+			setCurrentFrame(getFrame());
+			if (display) {
+				displayFrame(getCurrentFrame());
+			}
 			try {
-				Thread.sleep(streamingRate);
+				Thread.sleep(getStreamingRate());
 			} catch (InterruptedException e) {
-				e.printStackTrace();
-				throw new RuntimeException("Webcam streamer was interrupted.");
+				throw new RuntimeException("Local webcam streamer was interrupted", e);
 			}
 		}
-	}
-
-	/**
-	 * Gets the next frame of webcam image data to display.
-	 *
-	 * @return The image data.
-	 */
-	public byte[] getFrame() {
-		return webcam.getImage();
 	}
 
 	/**
@@ -64,23 +61,20 @@ public class LocalWebcamStreamer implements WebcamStreamer {
 	}
 
 	/**
-	 * Stops streaming webcam data.
+	 * Sets whether the display the local webcam on the local host or not. If so, a window is
+	 * created to render the images; otherwise any existing window is closed.
+	 *
+	 * @param display Whether to display the local images.
 	 */
-	public synchronized void stop() {
-		running = false;
-	}
+	public void setDisplay(boolean display) {
+		if (display == this.display) return;
 
-	public synchronized void start() {
-		running = true;
-		notifyAll();
-	}
-
-	public int getStreamingRate() {
-		return streamingRate;
-	}
-
-	public void setStreamingRate(int streamingRate) {
-		this.streamingRate = streamingRate;
+		this.display = display;
+		if (display) {
+			viewer = new StreamViewer();
+		} else {
+			viewer.close();
+		}
 	}
 
 }

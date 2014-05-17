@@ -1,32 +1,27 @@
 package simplestream.client;
 
 import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
 
 import messages.Message;
 import messages.MessageFactory;
-import messages.OverloadedResponseMessage;
-import messages.StartRequestMessage;
 
 import org.apache.log4j.Logger;
 
 import simplestream.Peer;
 import simplestream.server.ConnectionBuffer;
+
 import common.Out;
 import common.Strings;
 
 /**
  * Displays a webcam stream from a remote camera.
  */
-public class RemoteWebcamStreamer extends LocalWebcamStreamer {
+public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 
 	Logger log = Logger.getLogger(getClass());
 
 	private final String remoteHostname;
 	private final int remotePort;
-
-	private byte[] currentFrame;
 
 	private ConnectionBuffer buffer;
 
@@ -81,14 +76,6 @@ public class RemoteWebcamStreamer extends LocalWebcamStreamer {
 		while (true) {
 			String incoming = buffer.receive();
 		}
-	}
-
-	/**
-	 * Retrieve the next frame from the remote host.
-	 */
-	@Override
-	public byte[] getFrame() {
-		return currentFrame;
 	}
 
 }

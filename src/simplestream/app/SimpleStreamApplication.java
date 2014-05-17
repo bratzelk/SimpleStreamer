@@ -55,10 +55,12 @@ public class SimpleStreamApplication {
 	 */
 	public void init() {
 		Out.printHeading(Settings.APP_NAME + " " + Settings.APP_VERSION);
-		server = new StreamServer(streamingPort);
+		server = new StreamServer(streamingRate, streamingPort);
 		if (isLocal()) {
+			log.debug("Initiating local webcam stream...");
 			client = new StreamClient(streamingRate);
 		} else {
+			log.debug("Initiating remote webcam stream...");
 			client = new StreamClient(streamingRate, hostname, remotePort);
 		}
 	}
