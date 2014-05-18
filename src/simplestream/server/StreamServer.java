@@ -78,12 +78,12 @@ public class StreamServer {
 	 * @param buffer The connection to the client.
 	 */
 	protected void serve(ConnectionBuffer buffer) {
+		log.debug("Serving client " + buffer);
 		if (clients.size() == 0) {
 			webcam.init();
 		}
 		ClientHandler client = new ClientHandler(buffer, webcam);
 		clients.add(client);
-		log.debug("Serving client " + buffer);
 	}
 
 	public void stop() {

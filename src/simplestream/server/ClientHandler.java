@@ -50,6 +50,7 @@ public class ClientHandler implements Runnable {
 		while (true) {
 			// TODO(orlade): Listen for incoming requests.
 			try {
+				log.debug("Sending data");
 				buffer.send(buildImageMessage());
 			} catch (IOException e) {
 				log.error("Error retrieving webcam image for " + buffer);
