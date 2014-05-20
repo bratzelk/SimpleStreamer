@@ -23,12 +23,14 @@ public class ConnectionBuffer {
 	private static final Logger log = Logger.getLogger(ConnectionBuffer.class);
 
 	private final Socket socket;
+	private final Peer peer;
 
 	private final DataInputStream in;
 	private final DataOutputStream out;
 
 	public ConnectionBuffer(Socket socket) throws IOException {
 		this.socket = socket;
+		this.peer = Peer.fromSocket(socket);
 		this.in = new DataInputStream(socket.getInputStream());
 		this.out = new DataOutputStream(socket.getOutputStream());
 	}
@@ -131,6 +133,10 @@ public class ConnectionBuffer {
 	 */
 	public void close() throws IOException {
 		socket.close();
+	}
+
+	public Peer getPeer() {
+		return peer;
 	}
 
 	@Override

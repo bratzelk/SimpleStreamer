@@ -11,10 +11,11 @@ import messages.StatusResponseMessage;
 
 import org.apache.log4j.Logger;
 
-import simplestream.client.LocalWebcamStreamer;
+import simplestream.Peer;
 import simplestream.client.WebcamStreamer;
 import simplestream.server.ConnectionListener.Callback;
 
+import common.Settings;
 import common.Strings;
 
 /**
@@ -48,12 +49,34 @@ public class StreamServer {
 				Message statusMessage =
 								MessageFactory.createMessage(Strings.STATUS_RESONSE_MESSAGE);
 				buffer.send(statusMessage.toJSON());
-				serve(buffer);
+
+				if (clients.size() < Settings.MAX_CONNECTIONS) {
+					serve(buffer);
+				} else {
+					doHandover(buffer);
+				}
 			} catch (IOException e) {
 				throw new IllegalStateException("Failed to connect with client", e);
 			}
 		}
 	};
+
+	/**
+	 * Responds to a client attempting to connect to an overloaded server with the list of existing
+	 * clients streaming from the same server.
+	 *
+	 * @param buffer The {@link ConnectionBuffer} to the prospective client.
+	 * @throws IOException
+	 */
+	protected void doHandover(ConnectionBuffer buffer) throws IOException {
+		// TODO(orlade): Create the handover message by serializing the current clients.
+		Message handoverMessage = null; // = create...
+		for (ClientHandler client : clients) {
+			Peer peer = client.getPeer();
+			// Add to message...
+		}
+		buffer.send(handoverMessage);
+	}
 
 	/**
 	 * Wraps a connection listener on a new thread that

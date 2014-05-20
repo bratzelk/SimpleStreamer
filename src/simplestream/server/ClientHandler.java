@@ -8,6 +8,7 @@ import messages.MessageFactory;
 
 import org.apache.log4j.Logger;
 
+import simplestream.Peer;
 import simplestream.client.StreamClient;
 import simplestream.client.WebcamStreamer;
 
@@ -58,6 +59,9 @@ public class ClientHandler implements Runnable {
 				log.debug("Listening for startstream request...");
 				String request = buffer.receive();
 				if (MessageFactory.getMessageType(request).equals(Strings.START_REQUEST_MESSAGE)) {
+					// TODO(orlade): Parse ratelimit argument of startstream message.
+					// int requestLimit = message.get(Strings.RATELIMIT_JSON);
+					//
 					log.debug("Received startstream request from " + buffer);
 					streaming = true;
 					buffer.send(MessageFactory.createMessage(Strings.START_RESONSE_MESSAGE));
@@ -77,7 +81,8 @@ public class ClientHandler implements Runnable {
 				log.error("Error retrieving webcam image for " + buffer);
 			}
 
-			// TODO(orlade): Allow for different streaming rate from local webcam?
+			// TODO(orlade): Allow for a streaming rate different from the local webcam
+			// (i.e. implement client rate limiting)
 			try {
 				Thread.sleep(webcam.getStreamingRate());
 			} catch (InterruptedException e) {
@@ -102,6 +107,10 @@ public class ClientHandler implements Runnable {
 
 	public void stop() {
 
+	}
+
+	public Peer getPeer() {
+		return buffer.getPeer();
 	}
 
 }

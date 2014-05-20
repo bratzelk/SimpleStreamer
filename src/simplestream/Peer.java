@@ -1,5 +1,8 @@
 package simplestream;
 
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
 import org.json.simple.JSONObject;
 
 import common.Strings;
@@ -12,6 +15,11 @@ public class Peer {
 	public Peer(String hostname, int port) {
 		this.hostname = hostname;
 		this.port = port;
+	}
+
+	public static Peer fromSocket(Socket socket) {
+		InetSocketAddress remoteAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
+		return new Peer(remoteAddress.getHostName(), remoteAddress.getPort());
 	}
 
 	public String getHostname() {
