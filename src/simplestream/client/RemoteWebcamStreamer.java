@@ -2,11 +2,12 @@ package simplestream.client;
 
 import java.io.IOException;
 
+import messages.ImageResponseMessage;
 import messages.Message;
 import messages.MessageFactory;
+import simplestream.Compressor;
 import simplestream.Peer;
 import simplestream.server.ConnectionBuffer;
-
 import common.Out;
 import common.Strings;
 
@@ -58,11 +59,25 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		// overloadedMessage.addServer(remoteServer);
 		// // overloadedMessage.addClients(clients);
 		// Out.print(overloadedMessage.toJSON());
-
-		// TODO: The messages themselves don't compress any byte arrays.
-		// You need to do this explicitly before adding the data to a message.
-
-		// TODO: display remote stream.
+		
+	}
+	
+	
+	/**
+	 * Handles a ImageResponseMessage which is received in JSON format.
+	 * 
+	 * @param imageResponseJSON
+	 */
+	protected void handleImageResponseMessage(String imageResponseJSON) {
+		
+		log.debug("Received remote image data: " + imageResponseJSON);
+		byte[] compressedImageData = ImageResponseMessage.imagedataFromJSON(imageResponseJSON);
+		log.debug(compressedImageData);
+		//decompress the image data
+		byte[] decompressedImageData = Compressor.decompress(compressedImageData);
+		
+		// TODO: display the remote stream data.
+		displayFrame(decompressedImageData);
 	}
 
 	/**
@@ -71,8 +86,14 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 	 * @throws IOException
 	 */
 	protected void listen() throws IOException {
+		log.debug("Listening to responses forever!");
 		while (true) {
-			String incoming = buffer.receive();
+			String response = buffer.receive();
+			log.debug("Got Response: " + response);
+			//check if we got an image response message
+			if(MessageFactory.getMessageType(response).equals(Strings.IMAGE_RESONSE_MESSAGE)) {
+				handleImageResponseMessage(response);
+			}
 		}
 	}
 

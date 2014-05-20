@@ -1,7 +1,6 @@
 package simplestream.client;
 
 import simplestream.Webcam;
-import common.Out;
 
 /**
  * Displays a webcam stream from the default camera.

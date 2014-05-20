@@ -8,10 +8,10 @@ import messages.MessageFactory;
 
 import org.apache.log4j.Logger;
 
+import simplestream.Compressor;
 import simplestream.Peer;
 import simplestream.client.StreamClient;
 import simplestream.client.WebcamStreamer;
-
 import common.Strings;
 
 /**
@@ -27,6 +27,7 @@ public class ClientHandler implements Runnable {
 
 	/** The connection to the client. */
 	private final ConnectionBuffer buffer;
+	
 
 	/** The local webcam to send images from. */
 	private final WebcamStreamer webcam;
@@ -70,7 +71,7 @@ public class ClientHandler implements Runnable {
 				throw new RuntimeException("Error listening for request", e);
 			}
 		}
-		log.debug("Transitioning to ssending image data...");
+		log.debug("Transitioning to sending image data...");
 
 		while (true) {
 			// TODO(orlade): Listen for incoming requests.
@@ -101,7 +102,11 @@ public class ClientHandler implements Runnable {
 		ImageResponseMessage message =
 						(ImageResponseMessage) MessageFactory
 										.createMessage(Strings.IMAGE_RESONSE_MESSAGE);
-		message.setImageData(webcam.getFrame());
+		
+		//get the webcam image data and compress it
+		byte[] imageData = webcam.getFrame();
+		byte[] compressedImageData = Compressor.compress(imageData);
+		message.setImageData(compressedImageData);
 		return message;
 	}
 

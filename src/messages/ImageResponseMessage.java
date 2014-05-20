@@ -4,6 +4,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import common.Out;
 import common.Strings;
 
 public class ImageResponseMessage extends ResponseMessage {
@@ -18,12 +19,10 @@ public class ImageResponseMessage extends ResponseMessage {
 	
 	
 	public void setImageData(byte[] imageData) {
+		Out.print("Setting image data: " + imageData);
 		this.base64ImageData = Base64.encodeBase64(imageData);
 	}
 	
-	public byte[] getImageData() {
-		return Base64.decodeBase64(this.base64ImageData);
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -32,18 +31,18 @@ public class ImageResponseMessage extends ResponseMessage {
 		//put the response part into the message
 		JSONObject jsonMessage = standardMessageJSON();
 		
-		jsonMessage.put(Strings.DATA_JSON, this.base64ImageData);
+		jsonMessage.put(Strings.DATA_JSON, this.base64ImageData.toString());
 		
 		return jsonMessage.toJSONString();
 	}
 	
 	
-	public byte[] imagedataFromJSON(String jsonMessageString) {
+	public static byte[] imagedataFromJSON(String jsonMessageString) {
 		
 		JSONParser parser = new JSONParser();
 		JSONObject jsonMessage = null;
 		
-		byte[] base64ImageData = null;
+		byte[] imageData = null;
 		
 		try {
 			jsonMessage = (JSONObject) parser.parse(jsonMessageString);
@@ -52,9 +51,9 @@ public class ImageResponseMessage extends ResponseMessage {
 			System.exit(-1);
 		}
 		if(jsonMessage != null) {
-			base64ImageData = (byte[]) jsonMessage.get(Strings.DATA_JSON);
+			imageData = Base64.decodeBase64( (String) jsonMessage.get(Strings.DATA_JSON));
 		}
-		return base64ImageData;
+		return imageData;
 		
 	}
 
