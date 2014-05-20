@@ -8,9 +8,10 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
+import simplestream.Webcam;
+import simplestream.client.LocalWebcamStreamer;
 import simplestream.client.StreamClient;
 import simplestream.server.StreamServer;
-
 import common.Out;
 import common.Settings;
 import common.Strings;
@@ -55,13 +56,22 @@ public class SimpleStreamApplication {
 	 */
 	public void init() {
 		Out.printHeading(Settings.APP_NAME + " " + Settings.APP_VERSION);
-		server = new StreamServer(streamingRate, streamingPort);
+
+		// Create a shared streamer for the local webcam.
+		LocalWebcamStreamer streamer = new LocalWebcamStreamer(new Webcam(), streamingRate);
+
+		log.debug("Creating server");
+		server = new StreamServer(streamer, streamingRate, streamingPort);
+
+		log.debug("Creating client");
+		client = new StreamClient(streamer, streamingRate);
+
 		if (isLocal()) {
 			log.debug("Initiating local webcam stream...");
-			client = new StreamClient(streamingRate);
+			client.switchToLocal();
 		} else {
 			log.debug("Initiating remote webcam stream...");
-			client = new StreamClient(streamingRate, hostname, remotePort);
+			client.switchToRemote(hostname, remotePort);
 		}
 	}
 

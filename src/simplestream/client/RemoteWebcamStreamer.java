@@ -21,12 +21,15 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 	private ConnectionBuffer buffer;
 
 	public RemoteWebcamStreamer(int streamingRate, String remoteHostname, int remotePort) {
-		super(streamingRate);
+		super(null, streamingRate);
 		this.remoteHostname = remoteHostname;
 		this.remotePort = remotePort;
 	}
 
-	public void init() {
+	@Override
+	public void run() {
+		log.debug("Starting remote webcam stream...");
+
 		// This needs to be added to the overloadedMessage.
 		Peer remoteServer = new Peer(remoteHostname, remotePort);
 		try {

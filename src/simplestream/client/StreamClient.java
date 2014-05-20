@@ -4,39 +4,29 @@ package simplestream.client;
 /**
  * Manages the display of the webcam stream in either local or remote modes.
  */
-public class StreamClient implements Runnable {
+public class StreamClient {
 
 	private int streamingRate;
 
-	/** The current client stream manager. */
-	private WebcamStreamer streamer;
+	/** The current client local stream manager. */
+	private LocalWebcamStreamer localStreamer;
 
-	/**
-	 * Remote stream constructor.
-	 */
-	public StreamClient(int streamingRate, String hostname, int remotePort) {
-		this.streamingRate = streamingRate;
-		switchToRemote(hostname, remotePort);
-	}
+	/** The current client local stream manager. */
+	private RemoteWebcamStreamer remoteStreamer;
 
 	/**
 	 * Constructs a {@link StreamClient} in the default local mode.
 	 */
-	public StreamClient(int streamingRate) {
+	public StreamClient(LocalWebcamStreamer localStreamer, int streamingRate) {
+		this.localStreamer = localStreamer;
 		this.streamingRate = streamingRate;
-		switchToLocal();
 	}
-
-	@Override
-	public void run() {}
 
 	/**
 	 * Begins receiving webcam data from the local webcam, if not doing so already.
 	 */
-	protected void switchToLocal() {
-		killStreamer();
-		streamer = new LocalWebcamStreamer(streamingRate);
-		streamer.init();
+	public void switchToLocal() {
+		localStreamer.setDisplay(true);
 	}
 
 	/**
@@ -46,19 +36,19 @@ public class StreamClient implements Runnable {
 	 * @param remotePort The connected port on the remote host.
 	 */
 	public void switchToRemote(String hostname, int remotePort) {
-		killStreamer();
-		streamer = new RemoteWebcamStreamer(streamingRate, hostname, remotePort);
-		streamer.init();
+		localStreamer.setDisplay(false);
+		remoteStreamer = new RemoteWebcamStreamer(streamingRate, hostname, remotePort);
+		remoteStreamer.init();
 	}
 
-	/**
-	 * Stops any {@link LocalWebcamStreamer} that is currently running.
-	 */
-	protected void killStreamer() {
-		if (streamer != null) {
-			streamer.stop();
-		}
-	}
+//	/**
+//	 * Stops any {@link LocalWebcamStreamer} that is currently running.
+//	 */
+//	protected void killStreamer() {
+//		if (streamer != null) {
+//			streamer.stop();
+//		}
+//	}
 
 	public int getStreamingRate() {
 		return streamingRate;

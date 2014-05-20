@@ -9,7 +9,7 @@ import simplestream.Webcam;
  * Implements logic common to managing and rendering data streams from webcams, both local and
  * remote.
  */
-public class WebcamStreamerImpl implements WebcamStreamer {
+public abstract class WebcamStreamerImpl implements WebcamStreamer, Runnable {
 
 	protected final Logger log = Logger.getLogger(getClass());
 
@@ -25,18 +25,23 @@ public class WebcamStreamerImpl implements WebcamStreamer {
 	/** Whether to render the output of the local webcam. */
 	private boolean display;
 
-	public WebcamStreamerImpl(int streamingRate, boolean display) {
+	private final Thread thread;
+
+	public WebcamStreamerImpl(Webcam webcam, int streamingRate, boolean display) {
+		setWebcam(webcam);
 		setStreamingRate(streamingRate);
 		setDisplay(display);
+
+		log.debug("Running " + this + " on new thread...");
+		thread = new Thread(this);
 	}
 
-	public WebcamStreamerImpl(int streamingRate) {
-		this(streamingRate, true);
+	public WebcamStreamerImpl(Webcam webcam, int streamingRate) {
+		this(webcam, streamingRate, true);
 	}
 
-	@Override
 	public void init() {
-		webcam = new Webcam();
+		thread.start();
 	}
 
 	/**

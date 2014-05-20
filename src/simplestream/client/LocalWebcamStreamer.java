@@ -1,5 +1,6 @@
 package simplestream.client;
 
+import simplestream.Webcam;
 import common.Out;
 
 /**
@@ -7,21 +8,21 @@ import common.Out;
  */
 public class LocalWebcamStreamer extends WebcamStreamerImpl {
 
-	public LocalWebcamStreamer(int streamingRate, boolean display) {
-		super(streamingRate, display);
+	public LocalWebcamStreamer(Webcam webcam, int streamingRate, boolean display) {
+		super(webcam,streamingRate, display);
 	}
 
-	public LocalWebcamStreamer(int streamingRate) {
-		super(streamingRate);
+	public LocalWebcamStreamer(Webcam webcam, int streamingRate) {
+		super(webcam,streamingRate);
 	}
 
-	public synchronized void init() {
+	@Override
+	public void run() {
 		// TODO: Show the local image viewer.
 		// TODO: The StreamViewer currently listens for the enter key. It doesn't do anything when
 		// it
 		// catches the event yet. This needs to be implemented.
-		super.init();
-		Out.print("Receiving local webcam stream");
+		log.debug("Starting local webcam stream...");
 
 		// TODO: nice exit from this loop.
 		while (true) {

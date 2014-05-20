@@ -30,6 +30,9 @@ public class ClientHandler implements Runnable {
 	/** The local webcam to send images from. */
 	private final WebcamStreamer webcam;
 
+	/** Whether we are streaming images to the client. */
+	private boolean streaming = false;
+
 	/** The thread of control running this {@link ClientHandler}. */
 	private final Thread thread;
 
@@ -37,8 +40,10 @@ public class ClientHandler implements Runnable {
 		this.buffer = buffer;
 		this.webcam = webcam;
 
+		log.debug("setting up thread...");
 		thread = new Thread(this);
 		thread.start();
+		log.debug("Started thread...");
 	}
 
 	/**
@@ -47,10 +52,26 @@ public class ClientHandler implements Runnable {
 	 */
 	@Override
 	public void run() {
+		log.debug("Running client handler...");
+		while (!streaming) {
+			try {
+				log.debug("Listening for startstream request...");
+				String request = buffer.receive();
+				if (MessageFactory.getMessageType(request).equals(Strings.START_REQUEST_MESSAGE)) {
+					log.debug("Received startstream request from " + buffer);
+					streaming = true;
+					buffer.send(MessageFactory.createMessage(Strings.START_RESONSE_MESSAGE));
+				}
+			} catch (IOException e) {
+				throw new RuntimeException("Error listening for request", e);
+			}
+		}
+		log.debug("Transitioning to ssending image data...");
+
 		while (true) {
 			// TODO(orlade): Listen for incoming requests.
 			try {
-				log.debug("Sending data");
+				log.debug("Sending image data...");
 				buffer.send(buildImageMessage());
 			} catch (IOException e) {
 				log.error("Error retrieving webcam image for " + buffer);

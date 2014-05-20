@@ -60,16 +60,15 @@ public class StreamServer {
 	 *
 	 * @param streamingPort The port to stream
 	 */
-	public StreamServer(final int streamingRate, final int streamingPort) {
+	public StreamServer(final WebcamStreamer webcam, final int streamingRate,
+					final int streamingPort) {
+		this.webcam = webcam;
 		try {
 			listener = new ConnectionListener(streamingPort, clientConnectionCallback);
 			listener.start();
 		} catch (IOException e) {
 			log.error("Listen socket error", e);
 		}
-
-		// Connect to the local webcam to stream for clients.
-		webcam = new LocalWebcamStreamer(streamingRate, false);
 	}
 
 	/**
@@ -79,9 +78,6 @@ public class StreamServer {
 	 */
 	protected void serve(ConnectionBuffer buffer) {
 		log.debug("Serving client " + buffer);
-		if (clients.size() == 0) {
-			webcam.init();
-		}
 		ClientHandler client = new ClientHandler(buffer, webcam);
 		clients.add(client);
 	}
