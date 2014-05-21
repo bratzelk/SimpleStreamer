@@ -41,8 +41,6 @@ import common.Out;
 			//TODO: I don't know when you're supposed to call this. I think it is when you shut down.
 			//grabber.stopSession();
 			
-			Out.print("" + rawImageData);
-			
 			return rawImageData;
 		}
 		

@@ -5,6 +5,7 @@ import java.io.IOException;
 import messages.*;
 import simplestream.Compressor;
 import simplestream.Peer;
+import simplestream.StreamViewer;
 import simplestream.server.ConnectionBuffer;
 import common.Out;
 import common.Strings;
@@ -13,7 +14,7 @@ import common.Strings;
  * Displays a webcam stream from a remote camera.
  */
 public class RemoteWebcamStreamer extends WebcamStreamerImpl {
-
+	
 	private final String remoteHostname;
 	private final int remotePort;
 
@@ -58,7 +59,7 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		}
 		//Otherwise the responseMessageType should be "startingstream".
 
-		try {
+		try {		
 			listen();
 		} catch (IOException e) {
 			log.error("Connection problem with remote host: " + remoteServer, e);
@@ -87,11 +88,11 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		log.debug(compressedImageData);
 		//decompress the image data
 		byte[] decompressedImageData = Compressor.decompress(compressedImageData);
-		
-		setCurrentFrame(decompressedImageData);
-		
+			
 		// TODO: display the remote stream data.
-		displayFrame(compressedImageData);
+		//setCurrentFrame(decompressedImageData);
+		displayFrame(decompressedImageData);
+		
 	}
 
 	/**

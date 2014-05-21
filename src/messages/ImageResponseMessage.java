@@ -6,7 +6,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import common.Out;
 import common.Strings;
 
 public class ImageResponseMessage extends ResponseMessage {
@@ -21,7 +20,6 @@ public class ImageResponseMessage extends ResponseMessage {
 	
 	
 	public void setImageData(byte[] imageData) {
-		Out.print("Setting image data: " + imageData);
 		this.base64ImageData = Base64.encodeBase64(imageData);
 	}
 	

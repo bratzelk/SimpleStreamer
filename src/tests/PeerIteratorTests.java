@@ -15,7 +15,6 @@ import org.junit.Assert;
 import simplestream.BFSPeerIterator;
 import simplestream.NoUnseenPeersException;
 import simplestream.Peer;
-import common.Out;
 
 
 public class PeerIteratorTests {

@@ -80,6 +80,7 @@ public class ClientHandler implements Runnable {
 				buffer.send(buildImageMessage());
 			} catch (IOException e) {
 				log.error("Error retrieving webcam image for " + buffer);
+				log.error("Error was " + e);
 			}
 
 			// TODO(orlade): Allow for a streaming rate different from the local webcam

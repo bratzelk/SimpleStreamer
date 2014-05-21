@@ -76,7 +76,7 @@ public class ConnectionBuffer {
 	 */
 	public void send(String message) throws IOException {
 		// Send the message.
-		log.debug(this + " Sending data: " + message);
+		//log.debug(this + " Sending data: " + message);
 		out.writeUTF(message);
 	}
 
