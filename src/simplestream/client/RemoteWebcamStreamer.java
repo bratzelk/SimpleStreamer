@@ -2,9 +2,7 @@ package simplestream.client;
 
 import java.io.IOException;
 
-import messages.ImageResponseMessage;
-import messages.Message;
-import messages.MessageFactory;
+import messages.*;
 import simplestream.Compressor;
 import simplestream.Peer;
 import simplestream.server.ConnectionBuffer;
@@ -43,8 +41,22 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		Out.print("Receiving remote webcam stream");
 
 		// Start streaming from the remote host.
-		Message startMessage = MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
-		String response = buffer.sendAndReceive(startMessage);
+		StartRequestMessage startMessage = (StartRequestMessage) MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
+		
+		//TODO : Verify that these are correct (Is that the right port to use here?).
+		startMessage.setRatelimit(streamingRate);
+		startMessage.setServerPort(remotePort);
+		
+		String response = buffer.sendAndReceive((Message) startMessage);
+		
+		Message responseMessage = MessageFactory.createMessage(MessageFactory.getMessageType(response));
+		String responseMessageType = responseMessage.getType();
+
+		//Handle the overloaded response message.
+		if(responseMessageType.equals(Strings.OVERLOADED_RESPONSE_MESSAGE)) {
+			//TODO(kim): Handle the overloaded response message here;
+		}
+		//Otherwise the responseMessageType should be "startingstream".
 
 		try {
 			listen();
@@ -79,7 +91,7 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		setCurrentFrame(decompressedImageData);
 		
 		// TODO: display the remote stream data.
-		//displayFrame(compressedImageData);
+		displayFrame(compressedImageData);
 	}
 
 	/**

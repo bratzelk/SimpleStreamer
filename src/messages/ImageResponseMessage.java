@@ -1,5 +1,7 @@
 package messages;
 
+import java.io.UnsupportedEncodingException;
+
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -31,7 +33,17 @@ public class ImageResponseMessage extends ResponseMessage {
 		//put the response part into the message
 		JSONObject jsonMessage = standardMessageJSON();
 		
-		jsonMessage.put(Strings.DATA_JSON, this.base64ImageData.toString());
+		//We need to store this byte array as a String otherwise it won't form
+		//a valid JSON message (doesn't add " " to byte[])
+		//Need to ensure we convert this back to a byte[] when received.
+		String imageData = null;
+		try {
+			imageData = new String(this.base64ImageData, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		jsonMessage.put(Strings.DATA_JSON, imageData);
 		
 		return jsonMessage.toJSONString();
 	}
@@ -42,7 +54,7 @@ public class ImageResponseMessage extends ResponseMessage {
 		JSONParser parser = new JSONParser();
 		JSONObject jsonMessage = null;
 		
-		byte[] imageData = null;
+		byte[] imageDataDecoded = null;
 		
 		try {
 			jsonMessage = (JSONObject) parser.parse(jsonMessageString);
@@ -51,10 +63,18 @@ public class ImageResponseMessage extends ResponseMessage {
 			System.exit(-1);
 		}
 		if(jsonMessage != null) {
-			imageData = Base64.decodeBase64(  (String) jsonMessage.get(Strings.DATA_JSON));
+			//Convert the image data from a JSON string to a byte[] and decode it.
+			byte[] imageData = null;
+			try {
+				imageData = ((String)jsonMessage.get(Strings.DATA_JSON)).getBytes("UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			imageDataDecoded = Base64.decodeBase64(imageData);
 
 		}
-		return imageData;
+		return imageDataDecoded;
 		
 	}
 
