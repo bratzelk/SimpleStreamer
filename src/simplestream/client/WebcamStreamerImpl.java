@@ -19,7 +19,7 @@ public abstract class WebcamStreamerImpl implements WebcamStreamer, Runnable {
 	/** The viewer in which to render the local webcam images. */
 	private StreamViewer viewer;
 
-	private int streamingRate;
+	protected int streamingRate;
 	private boolean running = true;
 	private byte[] currentFrame;
 	/** Whether to render the output of the local webcam. */
