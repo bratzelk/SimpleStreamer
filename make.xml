@@ -25,7 +25,7 @@
             <zipfileset dir="./lib" includes="slf4j-api-1.7.2.jar"/>
             <zipfileset dir="./lib" includes="webcam-capture-0.3.10-RC6.jar"/> 
         	<zipfileset dir="./lib" includes="log4j-1.2.17.jar"/> 
-        	
+
         </jar>
     </target>
     
