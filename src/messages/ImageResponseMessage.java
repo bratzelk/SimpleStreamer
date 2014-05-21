@@ -37,7 +37,7 @@ public class ImageResponseMessage extends ResponseMessage {
 	}
 	
 	
-	public static byte[] imagedataFromJSON(String jsonMessageString) {
+	public static byte[] imagedataFromJSON(String jsonMessageString)  {
 		
 		JSONParser parser = new JSONParser();
 		JSONObject jsonMessage = null;
@@ -51,7 +51,8 @@ public class ImageResponseMessage extends ResponseMessage {
 			System.exit(-1);
 		}
 		if(jsonMessage != null) {
-			imageData = Base64.decodeBase64( (String) jsonMessage.get(Strings.DATA_JSON));
+			imageData = Base64.decodeBase64(  (String) jsonMessage.get(Strings.DATA_JSON));
+
 		}
 		return imageData;
 		

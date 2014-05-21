@@ -105,13 +105,14 @@ public class ClientHandler implements Runnable {
 		
 		//get the webcam image data and compress it
 		byte[] imageData = webcam.getFrame();
+		log.debug("Compressing data: " + imageData);
 		byte[] compressedImageData = Compressor.compress(imageData);
 		message.setImageData(compressedImageData);
 		return message;
 	}
 
 	public void stop() {
-
+		//TODO : 
 	}
 
 	public Peer getPeer() {

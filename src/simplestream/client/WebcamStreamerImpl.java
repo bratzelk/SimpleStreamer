@@ -59,6 +59,7 @@ public abstract class WebcamStreamerImpl implements WebcamStreamer, Runnable {
 	 * @param imageData The image to display.
 	 */
 	public void displayFrame(byte[] imageData) {
+		log.debug("Displaying the new image!");
 		viewer.addImage(imageData);
 	}
 

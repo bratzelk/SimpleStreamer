@@ -5,6 +5,7 @@ import org.bridj.Pointer;
 import com.github.sarxos.webcam.ds.buildin.natives.Device;
 import com.github.sarxos.webcam.ds.buildin.natives.DeviceList;
 import com.github.sarxos.webcam.ds.buildin.natives.OpenIMAJGrabber;
+import common.Out;
 
 	public class Webcam {
 		
@@ -39,6 +40,8 @@ import com.github.sarxos.webcam.ds.buildin.natives.OpenIMAJGrabber;
 			
 			//TODO: I don't know when you're supposed to call this. I think it is when you shut down.
 			//grabber.stopSession();
+			
+			Out.print("" + rawImageData);
 			
 			return rawImageData;
 		}

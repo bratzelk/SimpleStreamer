@@ -76,8 +76,10 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		//decompress the image data
 		byte[] decompressedImageData = Compressor.decompress(compressedImageData);
 		
+		setCurrentFrame(decompressedImageData);
+		
 		// TODO: display the remote stream data.
-		displayFrame(decompressedImageData);
+		//displayFrame(compressedImageData);
 	}
 
 	/**
