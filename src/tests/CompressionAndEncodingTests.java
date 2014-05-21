@@ -31,7 +31,7 @@ public class CompressionAndEncodingTests {
 	
 	
 	@Test
-	public void testCompress1() 
+	public void compressSimpleArray() 
 	{
 		byte[] intialBytes = new byte[2096];
 		
@@ -42,7 +42,7 @@ public class CompressionAndEncodingTests {
 	}
 	
 	@Test
-	public void testCompress2() 
+	public void compressString() 
 	{
 		String intialString = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 		
@@ -68,7 +68,7 @@ public class CompressionAndEncodingTests {
 	}
 	@Test
 	
-	public void testCompress3() 
+	public void encodeAndCompressString() 
 	{
 		String intialString = "somelongstupidstring..fasdjfhasjdkfasdjfhasdf/asdfhasdfasdhfasdhjkfahsdjkfahskdf";
 		
