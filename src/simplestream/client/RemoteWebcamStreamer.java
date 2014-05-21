@@ -79,7 +79,7 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		setCurrentFrame(decompressedImageData);
 		
 		// TODO: display the remote stream data.
-		//displayFrame(compressedImageData);
+		displayFrame(compressedImageData);
 	}
 
 	/**
