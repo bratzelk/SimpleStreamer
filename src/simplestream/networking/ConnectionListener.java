@@ -1,4 +1,4 @@
-package simplestream.server;
+package simplestream.networking;
 
 import java.io.IOException;
 import java.net.ServerSocket;

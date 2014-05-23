@@ -47,7 +47,7 @@ public class ImageResponseMessage extends ResponseMessage {
 	}
 
 
-	public static byte[] imagedataFromJSON(String jsonMessageString) {
+	public static byte[] imagedataFromJson(String jsonMessageString) {
 
 		JSONParser parser = new JSONParser();
 		JSONObject jsonMessage = null;

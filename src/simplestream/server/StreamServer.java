@@ -13,8 +13,9 @@ import org.apache.log4j.Logger;
 
 import simplestream.Peer;
 import simplestream.client.WebcamStreamer;
-import simplestream.server.ConnectionListener.Callback;
-
+import simplestream.networking.ConnectionBuffer;
+import simplestream.networking.ConnectionListener;
+import simplestream.networking.ConnectionListener.Callback;
 import common.Settings;
 import common.Strings;
 

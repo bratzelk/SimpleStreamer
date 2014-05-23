@@ -8,8 +8,7 @@ import messages.MessageFactory;
 import messages.StartRequestMessage;
 import simplestream.Compressor;
 import simplestream.Peer;
-import simplestream.server.ConnectionBuffer;
-
+import simplestream.networking.ConnectionBuffer;
 import common.Out;
 import common.Strings;
 
@@ -37,6 +36,8 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		Peer remoteServer = new Peer(remoteHostname, remotePort);
 		try {
 			buffer = ConnectionBuffer.bind(remoteServer);
+			// Provide a callback to perform a clean exit to the remote host.
+			getViewer().setExitCallback(new CleanExit(buffer));
 			String statusMessage = buffer.receive();
 			// TODO(orlade): Check status.
 		} catch (IOException e) {
@@ -52,7 +53,7 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		startMessage.setRatelimit(streamingRate);
 		startMessage.setServerPort(remotePort);
 
-		String response = buffer.sendAndReceive((Message) startMessage);
+		String response = buffer.sendAndReceive(startMessage);
 
 		Message responseMessage =
 			MessageFactory.createMessage(MessageFactory.getMessageType(response));
@@ -77,44 +78,34 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		// overloadedMessage.addServer(remoteServer);
 		// // overloadedMessage.addClients(clients);
 		// Out.print(overloadedMessage.toJSON());
-
-	}
-
-
-	/**
-	 * Handles a ImageResponseMessage which is received in JSON format.
-	 * 
-	 * @param imageResponseJSON
-	 */
-	protected void handleImageResponseMessage(String imageResponseJSON) {
-
-		log.debug("Received remote image data: " + imageResponseJSON);
-		byte[] compressedImageData = ImageResponseMessage.imagedataFromJSON(imageResponseJSON);
-		log.debug(compressedImageData);
-		// decompress the image data
-		byte[] decompressedImageData = Compressor.decompress(compressedImageData);
-
-		// TODO: display the remote stream data.
-		// setCurrentFrame(decompressedImageData);
-		displayFrame(decompressedImageData);
-
 	}
 
 	/**
 	 * Waits and receives streaming messages from the remote host.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	protected void listen() throws IOException {
 		log.debug("Listening to responses forever!");
 		while (true) {
 			String response = buffer.receive();
-			log.debug("Got Response: " + response);
-			// check if we got an image response message
+			// Check if we got an image response message
 			if (MessageFactory.getMessageType(response).equals(Strings.IMAGE_RESONSE_MESSAGE)) {
 				handleImageResponseMessage(response);
 			}
 		}
+	}
+
+	/**
+	 * Handles a ImageResponseMessage which is received in JSON format by decompressing and
+	 * displaying the image data.
+	 *
+	 * @param json The content of the {@link ImageResponseMessage}.
+	 */
+	protected void handleImageResponseMessage(String json) {
+		byte[] compressedImageData = ImageResponseMessage.imagedataFromJson(json);
+		byte[] decompressedImageData = Compressor.decompress(compressedImageData);
+		displayFrame(decompressedImageData);
 	}
 
 }

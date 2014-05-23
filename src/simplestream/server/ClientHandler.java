@@ -12,7 +12,7 @@ import simplestream.Compressor;
 import simplestream.Peer;
 import simplestream.client.StreamClient;
 import simplestream.client.WebcamStreamer;
-
+import simplestream.networking.ConnectionBuffer;
 import common.Strings;
 
 /**

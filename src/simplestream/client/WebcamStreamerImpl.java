@@ -46,7 +46,7 @@ public abstract class WebcamStreamerImpl implements WebcamStreamer, Runnable {
 
 	/**
 	 * Gets the next frame of webcam image data to display.
-	 * 
+	 *
 	 * @return The image data.
 	 */
 	public byte[] getFrame() {
@@ -55,7 +55,7 @@ public abstract class WebcamStreamerImpl implements WebcamStreamer, Runnable {
 
 	/**
 	 * Displays an image in the viewer.
-	 * 
+	 *
 	 * @param imageData The image to display.
 	 */
 	public void displayFrame(byte[] imageData) {
@@ -66,7 +66,7 @@ public abstract class WebcamStreamerImpl implements WebcamStreamer, Runnable {
 	/**
 	 * Sets whether the display the local webcam on the local host or not. If so, a window is
 	 * created to render the images; otherwise any existing window is closed.
-	 * 
+	 *
 	 * @param display Whether to display the local images.
 	 */
 	public void setDisplay(boolean display) {
@@ -110,6 +110,10 @@ public abstract class WebcamStreamerImpl implements WebcamStreamer, Runnable {
 
 	protected void setWebcam(Webcam webcam) {
 		this.webcam = webcam;
+	}
+
+	public StreamViewer getViewer() {
+		return viewer;
 	}
 
 	public boolean isRunning() {

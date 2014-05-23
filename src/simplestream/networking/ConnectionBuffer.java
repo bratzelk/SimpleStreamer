@@ -1,4 +1,4 @@
-package simplestream.server;
+package simplestream.networking;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -20,15 +20,23 @@ import simplestream.Peer;
 
 /**
  * Sends and receives messages between hosts.
+ *
+ * @see http://docs.oracle.com/javase/tutorial/networking/sockets/readingWriting.html
  */
 public class ConnectionBuffer {
 
 	private static final Logger log = Logger.getLogger(ConnectionBuffer.class);
 
+	/** The socket representing the connection to the client. */
 	private final Socket socket;
+
+	/** Details of the client machine. */
 	private final Peer peer;
 
+	/** Reads in messages received by the socket. */
 	private final BufferedReader reader;
+
+	/** Writes messages out to the socket. */
 	private final PrintWriter writer;
 
 	public ConnectionBuffer(Socket socket) throws IOException {
@@ -55,30 +63,30 @@ public class ConnectionBuffer {
 
 	/**
 	 * Reads in request data from the input stream of the socket.
-	 * 
+	 *
 	 * @return The contents of the request message.
 	 * @throws IOException
 	 */
 	public String receive() throws IOException {
 		String response = reader.readLine();
-		log.debug(this + " Received response: " + response);
+		log.debug(this + " Received response: " + truncate(response, 40));
 		return response;
 	}
 
 	/**
 	 * Sends a message without waiting for a response.
-	 * 
+	 *
 	 * @param message The message to send.
 	 * @throws IOException
 	 */
 	public void send(String message) throws IOException {
-		log.debug(this + " Sending data: " + message);
+		log.debug(this + " Sending data: " + truncate(message, 40));
 		writer.println(message);
 	}
 
 	/**
 	 * Sends a {@link Message} without waiting for a response.
-	 * 
+	 *
 	 * @param message The message to send.
 	 * @throws IOException
 	 */
@@ -88,7 +96,7 @@ public class ConnectionBuffer {
 
 	/**
 	 * Sends a message via the socket.
-	 * 
+	 *
 	 * @param message The message to send.
 	 * @return The response received.
 	 */
@@ -114,7 +122,7 @@ public class ConnectionBuffer {
 
 	/**
 	 * Serializes and sends the given message.
-	 * 
+	 *
 	 * @param message The {@link Message} to send.
 	 * @return The response received.
 	 */
@@ -123,8 +131,22 @@ public class ConnectionBuffer {
 	}
 
 	/**
+	 * Truncates the string to the given length.
+	 *
+	 * @param message The message to truncate.
+	 * @param lengthThe maximum length of the truncated message string.
+	 * @return The truncated message.
+	 */
+	protected String truncate(String message, int maxLength) {
+		if (message.length() > maxLength) {
+			return message.substring(0, maxLength) + "...";
+		}
+		return message;
+	}
+
+	/**
 	 * Cleans up any {@link Resources} being used.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public void close() throws IOException {

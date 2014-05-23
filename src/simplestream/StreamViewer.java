@@ -19,13 +19,20 @@ import javax.swing.KeyStroke;
  */
 public class StreamViewer {
 
-	Viewer myViewer;
-	JFrame frame;
+	private final Viewer myViewer;
+	private final JFrame frame;
+	private Runnable exitCallback;
 
-	public StreamViewer() {
+	/**
+	 * Creates a new {@link StreamViewer} instance to display webcam images.
+	 *
+	 * @param exitCallback A callback to run when the user exits the program.
+	 */
+	public StreamViewer(Runnable exitCallback) {
 
-		myViewer = new Viewer();
-		frame = new JFrame("Simple Stream Viewer");
+		this.myViewer = new Viewer();
+		this.frame = new JFrame("Simple Stream Viewer");
+		this.exitCallback = exitCallback;
 
 		frame.setVisible(true);
 		frame.setSize(320, 240);
@@ -40,17 +47,21 @@ public class StreamViewer {
 		myViewer.getActionMap().put("shutdownAction", shutdownAction);
 	}
 
+	public StreamViewer() {
+		this(null);
+	}
 
-	// TODO: Actually send the shutdown message
-	// This action is run when the user inputs the shutdown command (enter key).
+	// Listen for a shutdown action, then invoke the exit callback.
 	@SuppressWarnings("serial")
 	Action shutdownAction = new AbstractAction() {
 		public void actionPerformed(ActionEvent e) {
-			JOptionPane.showMessageDialog(frame, "Sending shutdown message...");
-			// TODO: Actually send the shutdown message
+			if (exitCallback != null) {
+				exitCallback.run();
+			} else {
+				System.out.println("No clean shutdown callback to run");
+			}
 		}
 	};
-
 
 	/**
 	 * Add a frame which is displayed by the viewer This data should be de-compressed etc and ready
@@ -66,6 +77,10 @@ public class StreamViewer {
 	 */
 	public void close() {
 		frame.dispose();
+	}
+
+	public void setExitCallback(Runnable exitCallback) {
+		this.exitCallback = exitCallback;
 	}
 
 }
