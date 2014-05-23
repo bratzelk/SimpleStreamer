@@ -36,8 +36,6 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		Peer remoteServer = new Peer(remoteHostname, remotePort);
 		try {
 			buffer = ConnectionBuffer.bind(remoteServer);
-			// Provide a callback to perform a clean exit to the remote host.
-			getViewer().setExitCallback(new CleanExit(buffer));
 			String statusMessage = buffer.receive();
 			// TODO(orlade): Check status.
 		} catch (IOException e) {
@@ -106,6 +104,31 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		byte[] compressedImageData = ImageResponseMessage.imagedataFromJson(json);
 		byte[] decompressedImageData = Compressor.decompress(compressedImageData);
 		displayFrame(decompressedImageData);
+	}
+
+	/**
+	 * Cleans up the streamer and attempts to stop the remote host as well.
+	 */
+	@Override
+	public synchronized void kill() {
+		stopRemoteStreaming();
+		super.kill();
+		try {
+			buffer.kill();
+		} catch (IOException e) {
+			log.error("Error while shutting down " + buffer, e);
+		}
+	}
+
+	/**
+	 * Sends a {@code stopstream} message to the remote host to attempt a clean exit.
+	 */
+	protected void stopRemoteStreaming() {
+		try {
+			buffer.send(MessageFactory.createMessage(Strings.STOP_REQUEST_MESSAGE));
+		} catch (IOException e) {
+			log.error("Failed to perform clean exit", e);
+		}
 	}
 
 }

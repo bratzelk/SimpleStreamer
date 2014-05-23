@@ -11,8 +11,8 @@ import org.kohsuke.args4j.Option;
 import simplestream.Webcam;
 import simplestream.client.LocalWebcamStreamer;
 import simplestream.client.StreamClient;
+import simplestream.client.WebcamStreamer;
 import simplestream.server.StreamServer;
-
 import common.Out;
 import common.Settings;
 import common.Strings;
@@ -37,6 +37,9 @@ public class SimpleStreamApplication {
 	@Option(name = "-rate", usage = "Streaming Rate")
 	private int streamingRate = Settings.DEFAULT_STREAMING_RATE;
 
+	/** The {@link WebcamStreamer} for the local webcam, to be shared by the server and client. */
+	private LocalWebcamStreamer streamer;
+
 	private StreamServer server;
 	private StreamClient client;
 
@@ -49,7 +52,6 @@ public class SimpleStreamApplication {
 		SimpleStreamApplication instance = new SimpleStreamApplication();
 		instance.readCommandLineArgs(args);
 		instance.init();
-		// TODO: Listen for user input, when a user presses enter send a shutdown request.
 	}
 
 	/**
@@ -59,12 +61,12 @@ public class SimpleStreamApplication {
 		Out.printHeading(Settings.APP_NAME + " " + Settings.APP_VERSION);
 
 		// Create a shared streamer for the local webcam.
-		LocalWebcamStreamer streamer = new LocalWebcamStreamer(new Webcam(), streamingRate);
+		streamer = new LocalWebcamStreamer(new Webcam(), streamingRate);
 
-		log.debug("Creating server");
+		log.debug("Creating server...");
 		server = new StreamServer(streamer, streamingRate, streamingPort);
 
-		log.debug("Creating client");
+		log.debug("Creating client...");
 		client = new StreamClient(streamer, streamingRate);
 
 		if (isLocal()) {
@@ -74,15 +76,33 @@ public class SimpleStreamApplication {
 			log.debug("Initiating remote webcam stream...");
 			client.switchToRemote(hostname, remotePort);
 		}
+
+		// When the viewer is closed, stop and clean up the whole application.
+		streamer.getViewer().setExitCallback(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					stop();
+				} catch (IOException e) {
+					log.error("Failed to exit cleanly", e);
+				}
+			}
+		});
 	}
 
+	/**
+	 * Stops and cleans up the application's resources.
+	 */
 	public void stop() throws IOException {
-		log.debug("Stopping server...");
+		log.debug("Stopping application...");
+		streamer.kill();
+		server.kill();
+		client.kill();
 	}
 
 	/**
 	 * This will parse command line args and read them into our class variables
-	 * 
+	 *
 	 * On error the system will exit.
 	 */
 	private void readCommandLineArgs(String[] args) {

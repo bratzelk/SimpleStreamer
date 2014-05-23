@@ -12,7 +12,7 @@ public interface WebcamStreamer {
 
 	/**
 	 * Gets the next frame of webcam image data to display.
-	 * 
+	 *
 	 * @return The image data.
 	 */
 	public byte[] getFrame();
@@ -23,8 +23,8 @@ public interface WebcamStreamer {
 	public int getStreamingRate();
 
 	/**
-	 * Stops the streamer from updating.
+	 * Stops the streamer from updating. Should be idempotent, so can be killed multiple times.
 	 */
-	public void stop();
+	public void kill();
 
 }

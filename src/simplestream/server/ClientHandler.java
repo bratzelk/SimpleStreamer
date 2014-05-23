@@ -18,8 +18,8 @@ import common.Strings;
 /**
  * Services a single {@link StreamClient} by responding to requests and streaming webcam data when
  * applicable.
- * 
- * New {@link ClientHandler}s start themselves on their own thread, so calling {@link #stop()} will
+ *
+ * New {@link ClientHandler}s start themselves on their own thread, so calling {@link #kill()} will
  * stop the handler gracefully and clean up all necessary resources.
  */
 public class ClientHandler implements Runnable {
@@ -28,7 +28,6 @@ public class ClientHandler implements Runnable {
 
 	/** The connection to the client. */
 	private final ConnectionBuffer buffer;
-
 
 	/** The local webcam to send images from. */
 	private final WebcamStreamer webcam;
@@ -97,7 +96,7 @@ public class ClientHandler implements Runnable {
 
 	/**
 	 * Constructs an {@link ImageResponseMessage} to send to the client.
-	 * 
+	 *
 	 * @return The constructed message.
 	 */
 	protected Message buildImageMessage() {
@@ -112,8 +111,17 @@ public class ClientHandler implements Runnable {
 		return message;
 	}
 
-	public void stop() {
-		// TODO :
+	/**
+	 * Stops and cleans up the client handler's resources.
+	 */
+	public void kill() {
+		log.debug("Shutting down ClientHandler for " + getPeer() + "...");
+		webcam.kill();
+		try {
+			buffer.kill();
+		} catch (IOException e) {
+			log.error("Error while killing buffer", e);
+		}
 	}
 
 	/**

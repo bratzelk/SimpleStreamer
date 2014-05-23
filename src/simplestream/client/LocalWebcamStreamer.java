@@ -15,29 +15,37 @@ public class LocalWebcamStreamer extends WebcamStreamerImpl {
 		super(webcam, streamingRate);
 	}
 
+	/**
+	 * Initiates the local webcam streaming logic.
+	 */
 	@Override
 	public void run() {
 		// TODO: Show the local image viewer.
-		// TODO: The StreamViewer currently listens for the enter key. It doesn't do anything when
-		// it
-		// catches the event yet. This needs to be implemented.
 		log.debug("Starting local webcam stream...");
+		loop();
+	}
 
-		// TODO: nice exit from this loop.
+	/**
+	 * So long as the streamer is running, receives frames from the webcam and displays them.
+	 */
+	protected void loop() {
 		while (true) {
-			// Pause activity if not running.
-			if (!isRunning()) try {
-				wait();
-			} catch (InterruptedException e) {}
-
-			setCurrentFrame(getFrame());
-			if (isDisplaying()) {
-				displayFrame(getCurrentFrame());
+			// TODO(orlade): Pause activity if not running.
+			if (!isRunning()) {
+				log.debug("Waiting for the local streamer to start...");
+			} else {
+				setCurrentFrame(getFrame());
+				if (isDisplaying()) {
+					displayFrame(getCurrentFrame());
+				}
 			}
+
+			// Wait until it's time to display the next frame.
 			try {
 				Thread.sleep(getStreamingRate());
 			} catch (InterruptedException e) {
-				throw new RuntimeException("Local webcam streamer was interrupted", e);
+				log.error("Local webcam streamer was interrupted", e);
+				return;
 			}
 		}
 	}

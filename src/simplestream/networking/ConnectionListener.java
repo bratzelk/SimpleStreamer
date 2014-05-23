@@ -13,7 +13,10 @@ public class ConnectionListener extends Thread {
 
 	Logger log = Logger.getLogger(getClass());
 
+	/** The socket that receives incoming requests. */
 	private ServerSocket socket;
+
+	/** The callback to invoke when a request is received. */
 	private Callback callback;
 
 	/**
@@ -22,7 +25,7 @@ public class ConnectionListener extends Thread {
 	public static interface Callback {
 		/**
 		 * Invoked when a new client connection {@link Socket} is established.
-		 * 
+		 *
 		 * @param clientSocket The {@link Socket} established with the requesting client.
 		 */
 		public void onRequest(Socket clientSocket);
@@ -33,32 +36,36 @@ public class ConnectionListener extends Thread {
 		this.callback = callback;
 	}
 
+	/**
+	 * Listens for incoming connections and hands new clients off the to {@link Callback}.
+	 */
 	public void run() {
 		int i = 0;
 		while (true) {
-			Socket clientSocket;
+			if (socket.isClosed()) {
+				log.debug("ConnectionListener socket is closed, stopping...");
+				return;
+			}
+
 			try {
-				if (!socket.isClosed()) {
-					log.debug("Server listening for connections on port " + socket.getLocalPort()
-						+ "...");
-					clientSocket = socket.accept();
-					i++;
-					log.debug("Received connection " + i + " from "
-						+ clientSocket.getRemoteSocketAddress());
-					callback.onRequest(clientSocket);
-				}
+				log.debug("Server listening for connections on port " + socket.getLocalPort()
+					+ "...");
+				Socket clientSocket = socket.accept();
+				log.debug(String.format("Received connection %d from %s", ++i,
+					clientSocket.getRemoteSocketAddress()));
+				callback.onRequest(clientSocket);
 			} catch (IOException e) {
-				if (!socket.isClosed()) {
-					// TODO(orlade): Handle more gracefully.
-					log.error("Socket closed unexpectedly", e);
-					throw new RuntimeException(e);
-				}
+				log.error("Socket closed unexpectedly", e);
+				return;
 			}
 		}
 	}
 
-	public void close() throws IOException {
-		log.debug("Closing connection listener...");
+	/**
+	 * Stops and cleans up the {@link ConnectionListener}'s resources.
+	 */
+	public void kill() throws IOException {
+		log.debug("Shutting down connection listener...");
 		this.interrupt();
 		socket.close();
 	}

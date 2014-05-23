@@ -92,8 +92,12 @@ public abstract class WebcamStreamerImpl implements WebcamStreamer, Runnable {
 	/**
 	 * Stops streaming webcam data.
 	 */
-	public synchronized void stop() {
-		running = false;
+	public void kill() {
+		log.debug("Stopping " + this + "...");
+		setRunning(false);
+		if (thread.isAlive()) {
+			thread.interrupt();
+		}
 	}
 
 	public int getStreamingRate() {

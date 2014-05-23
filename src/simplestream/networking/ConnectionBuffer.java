@@ -145,12 +145,15 @@ public class ConnectionBuffer {
 	}
 
 	/**
-	 * Cleans up any {@link Resources} being used.
+	 * Cleans up any resources being used.
 	 *
 	 * @throws IOException
 	 */
-	public void close() throws IOException {
+	public void kill() throws IOException {
+		log.debug("Shutting down " + this + "...");
 		socket.close();
+		reader.close();
+		writer.close();
 	}
 
 	public Peer getPeer() {

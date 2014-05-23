@@ -37,7 +37,7 @@ public class StreamClient {
 
 	/**
 	 * Begins receiving webcam data from a remote host.
-	 * 
+	 *
 	 * @param hostname The hostname of the remote host.
 	 * @param remotePort The connected port on the remote host.
 	 */
@@ -48,14 +48,17 @@ public class StreamClient {
 		remoteStreamer.init();
 	}
 
-	// /**
-	// * Stops any {@link LocalWebcamStreamer} that is currently running.
-	// */
-	// protected void killStreamer() {
-	// if (streamer != null) {
-	// streamer.stop();
-	// }
-	// }
+	/**
+	 * Stops and cleans up the client's resources.
+	 */
+	public void kill() {
+		log.debug("Shutting down StreamClient...");
+		localStreamer.kill();
+		if (remoteStreamer != null) {
+			remoteStreamer.kill();
+		}
+		log.debug("StreamClient shut down");
+	}
 
 	public int getStreamingRate() {
 		return streamingRate;

@@ -60,6 +60,7 @@ public class StreamViewer {
 			} else {
 				System.out.println("No clean shutdown callback to run");
 			}
+			close();
 		}
 	};
 

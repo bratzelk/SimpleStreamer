@@ -65,7 +65,7 @@ public class StreamServer {
 	/**
 	 * Responds to a client attempting to connect to an overloaded server with the list of existing
 	 * clients streaming from the same server.
-	 * 
+	 *
 	 * @param buffer The {@link ConnectionBuffer} to the prospective client.
 	 * @throws IOException
 	 */
@@ -81,7 +81,7 @@ public class StreamServer {
 
 	/**
 	 * Wraps a connection listener on a new thread that
-	 * 
+	 *
 	 * @param streamingPort The port to stream
 	 */
 	public StreamServer(final WebcamStreamer webcam, final int streamingRate,
@@ -97,7 +97,7 @@ public class StreamServer {
 
 	/**
 	 * Listens for and handles requests from a client represented by the {@link ConnectionBuffer}.
-	 * 
+	 *
 	 * @param buffer The connection to the client.
 	 */
 	protected void serve(ConnectionBuffer buffer) {
@@ -106,10 +106,21 @@ public class StreamServer {
 		clients.add(client);
 	}
 
-	public void stop() {
-		for (ClientHandler client : clients) {
-			client.stop();
+	/**
+	 * Stops and cleans up the server's resources.
+	 */
+	public void kill() {
+		log.debug("Shutting down StreamServer...");
+		webcam.kill();
+		try {
+			listener.kill();
+		} catch (IOException e) {
+			log.error("Error while shutting down connection listener", e);
 		}
+		for (ClientHandler client : clients) {
+			client.kill();
+		}
+		log.debug("StreamServer shut down");
 	}
 
 }
