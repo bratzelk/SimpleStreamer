@@ -30,6 +30,13 @@ public class Peer {
 		return this.port;
 	}
 
+	/**
+	 * Returns whether this {@link Peer} has the given hostname and port.
+	 */
+	public boolean equals(String hostname, int port) {
+		return this.hostname.equals(hostname) && this.port == port;
+	}
+
 	@Override
 	public String toString() {
 		return toJSON().toJSONString();

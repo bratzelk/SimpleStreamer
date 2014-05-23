@@ -52,7 +52,6 @@ public class RemoteWebcam implements Webcam {
 			ConnectionBuffer buffer = ConnectionBuffer.bind(peer);
 			String statusMessage = buffer.receive();
 			// TODO(orlade): Check status, perform any further setup.
-			startStreaming();
 			return buffer;
 		} catch (IOException e) {
 			throw new IllegalStateException("Unable to connect to remote peer: " + peer);
@@ -105,6 +104,7 @@ public class RemoteWebcam implements Webcam {
 	 * the remote peer and saves them they are received.
 	 */
 	protected void listen() {
+		// Set up the local stream listener.
 		listenThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -131,6 +131,9 @@ public class RemoteWebcam implements Webcam {
 			}
 		});
 		listenThread.start();
+
+		// Start streaming data from the remote host.
+		startStreaming();
 	}
 
 	/**
@@ -154,6 +157,10 @@ public class RemoteWebcam implements Webcam {
 
 	public synchronized void setCurrentFrame(byte[] currentFrame) {
 		this.currentFrame = currentFrame;
+	}
+
+	public Peer getPeer() {
+		return peer;
 	}
 
 	@Override

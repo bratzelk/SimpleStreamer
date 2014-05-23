@@ -86,6 +86,7 @@ public class SimpleStreamApplication {
 			log.debug("Initiating remote webcam stream...");
 			client.switchToRemote(hostname, remotePort);
 		}
+		client.runViewer();
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package simplestream.webcam;
 
+import org.apache.log4j.Logger;
 import org.bridj.Pointer;
 
 import com.github.sarxos.webcam.ds.buildin.natives.Device;
@@ -11,19 +12,23 @@ import com.github.sarxos.webcam.ds.buildin.natives.OpenIMAJGrabber;
  */
 public class LocalWebcam implements Webcam {
 
-	OpenIMAJGrabber grabber;
-	Device device;
+	private final Logger log = Logger.getLogger(getClass());
+
+	private final OpenIMAJGrabber grabber;
+	private Device device;
 
 	public LocalWebcam() {
 		grabber = new OpenIMAJGrabber();
-
-		device = null;
 
 		// Use the first device.
 		Pointer<DeviceList> devices = grabber.getVideoDevices();
 		for (Device d : devices.get().asArrayList()) {
 			device = d;
 			break;
+		}
+		// Ensure a webcam was found.
+		if (device == null) {
+			throw new IllegalStateException("No local webcam device found");
 		}
 
 		boolean started = grabber.startSession(320, 240, 30, Pointer.pointerTo(device));
@@ -33,17 +38,19 @@ public class LocalWebcam implements Webcam {
 		}
 	}
 
-
-	// TODO: Finish this and return an image byte array.
+	/**
+	 * Grabs the next image frame from the local webcam and return it as a byte array.
+	 */
 	public byte[] getImage() {
-
 		grabber.nextFrame();
-		byte[] rawImageData = grabber.getImage().getBytes(320 * 240 * 3);
+		return grabber.getImage().getBytes(320 * 240 * 3);
+	}
 
-		// TODO: I don't know when you're supposed to call this. I think it is when you shut down.
-		// grabber.stopSession();
-
-		return rawImageData;
+	@Override
+	public void kill() {
+		log.debug("Shutting down " + this + "...");
+		grabber.stopSession();
+		log.debug(this + " shut down successfully");
 	}
 
 }
