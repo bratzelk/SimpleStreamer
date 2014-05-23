@@ -27,7 +27,7 @@ public class ClientHandler implements Runnable {
 
 	/** The connection to the client. */
 	private final ConnectionBuffer buffer;
-	
+
 
 	/** The local webcam to send images from. */
 	private final WebcamStreamer webcam;
@@ -101,10 +101,9 @@ public class ClientHandler implements Runnable {
 	 */
 	protected Message buildImageMessage() {
 		ImageResponseMessage message =
-						(ImageResponseMessage) MessageFactory
-										.createMessage(Strings.IMAGE_RESONSE_MESSAGE);
-		
-		//get the webcam image data and compress it
+			(ImageResponseMessage) MessageFactory.createMessage(Strings.IMAGE_RESONSE_MESSAGE);
+
+		// get the webcam image data and compress it
 		byte[] imageData = webcam.getFrame();
 		log.debug("Compressing data: " + imageData);
 		byte[] compressedImageData = Compressor.compress(imageData);
@@ -113,9 +112,12 @@ public class ClientHandler implements Runnable {
 	}
 
 	public void stop() {
-		//TODO : 
+		// TODO :
 	}
 
+	/**
+	 * Returns the {@link Peer} of the client's {@link ConnectionBuffer}.
+	 */
 	public Peer getPeer() {
 		return buffer.getPeer();
 	}

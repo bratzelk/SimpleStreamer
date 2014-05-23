@@ -5,7 +5,6 @@ import org.bridj.Pointer;
 import com.github.sarxos.webcam.ds.buildin.natives.Device;
 import com.github.sarxos.webcam.ds.buildin.natives.DeviceList;
 import com.github.sarxos.webcam.ds.buildin.natives.OpenIMAJGrabber;
-import common.Out;
 
 	public class Webcam {
 		
