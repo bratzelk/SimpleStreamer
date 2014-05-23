@@ -1,9 +1,12 @@
 package simplestream.server;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -25,14 +28,18 @@ public class ConnectionBuffer {
 	private final Socket socket;
 	private final Peer peer;
 
-	private final DataInputStream in;
-	private final DataOutputStream out;
+	private final BufferedReader reader;
+	private final PrintWriter writer;
 
 	public ConnectionBuffer(Socket socket) throws IOException {
 		this.socket = socket;
 		this.peer = Peer.fromSocket(socket);
-		this.in = new DataInputStream(socket.getInputStream());
-		this.out = new DataOutputStream(socket.getOutputStream());
+
+		DataInputStream in = new DataInputStream(socket.getInputStream());
+		this.reader = new BufferedReader(new InputStreamReader(in));
+
+		DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+		this.writer = new PrintWriter(out, true);
 	}
 
 	/**
@@ -42,7 +49,7 @@ public class ConnectionBuffer {
 		Socket socket = new Socket(remoteServer.getHostname(), remoteServer.getPort());
 		ConnectionBuffer buffer = new ConnectionBuffer(socket);
 		log.debug(buffer + " Established connection to " + remoteServer.getHostname() + ":"
-						+ remoteServer.getPort());
+			+ remoteServer.getPort());
 		return buffer;
 	}
 
@@ -53,19 +60,9 @@ public class ConnectionBuffer {
 	 * @throws IOException
 	 */
 	public String receive() throws IOException {
-		String response = in.readUTF();
+		String response = reader.readLine();
 		log.debug(this + " Received response: " + response);
 		return response;
-	}
-
-	/**
-	 * Sends the given message in response to a request.
-	 *
-	 * @param response The response message to send.
-	 * @throws IOException
-	 */
-	public void respond(String response) throws IOException {
-		out.writeUTF(response.toString());
 	}
 
 	/**
@@ -75,9 +72,8 @@ public class ConnectionBuffer {
 	 * @throws IOException
 	 */
 	public void send(String message) throws IOException {
-		// Send the message.
-		//log.debug(this + " Sending data: " + message);
-		out.writeUTF(message);
+		log.debug(this + " Sending data: " + message);
+		writer.println(message);
 	}
 
 	/**
