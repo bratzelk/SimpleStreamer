@@ -148,6 +148,7 @@ public class RemoteWebcam implements Webcam {
 	public void kill() {
 		log.debug("Shutting down " + this + "...");
 		listenThread.interrupt();
+		stopStreaming();
 		log.debug(this + " shut down successfull");
 	}
 
