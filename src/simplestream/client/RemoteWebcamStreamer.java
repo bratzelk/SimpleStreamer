@@ -2,11 +2,14 @@ package simplestream.client;
 
 import java.io.IOException;
 
-import messages.*;
+import messages.ImageResponseMessage;
+import messages.Message;
+import messages.MessageFactory;
+import messages.StartRequestMessage;
 import simplestream.Compressor;
 import simplestream.Peer;
-import simplestream.StreamViewer;
 import simplestream.server.ConnectionBuffer;
+
 import common.Out;
 import common.Strings;
 
@@ -14,7 +17,7 @@ import common.Strings;
  * Displays a webcam stream from a remote camera.
  */
 public class RemoteWebcamStreamer extends WebcamStreamerImpl {
-	
+
 	private final String remoteHostname;
 	private final int remotePort;
 
@@ -42,24 +45,26 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		Out.print("Receiving remote webcam stream");
 
 		// Start streaming from the remote host.
-		StartRequestMessage startMessage = (StartRequestMessage) MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
-		
-		//TODO : Verify that these are correct (Is that the right port to use here?).
+		StartRequestMessage startMessage =
+			(StartRequestMessage) MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
+
+		// TODO : Verify that these are correct (Is that the right port to use here?).
 		startMessage.setRatelimit(streamingRate);
 		startMessage.setServerPort(remotePort);
-		
+
 		String response = buffer.sendAndReceive((Message) startMessage);
-		
-		Message responseMessage = MessageFactory.createMessage(MessageFactory.getMessageType(response));
+
+		Message responseMessage =
+			MessageFactory.createMessage(MessageFactory.getMessageType(response));
 		String responseMessageType = responseMessage.getType();
 
-		//Handle the overloaded response message.
-		if(responseMessageType.equals(Strings.OVERLOADED_RESPONSE_MESSAGE)) {
-			//TODO(kim): Handle the overloaded response message here;
+		// Handle the overloaded response message.
+		if (responseMessageType.equals(Strings.OVERLOADED_RESPONSE_MESSAGE)) {
+			// TODO(kim): Handle the overloaded response message here;
 		}
-		//Otherwise the responseMessageType should be "startingstream".
+		// Otherwise the responseMessageType should be "startingstream".
 
-		try {		
+		try {
 			listen();
 		} catch (IOException e) {
 			log.error("Connection problem with remote host: " + remoteServer, e);
@@ -72,32 +77,32 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		// overloadedMessage.addServer(remoteServer);
 		// // overloadedMessage.addClients(clients);
 		// Out.print(overloadedMessage.toJSON());
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Handles a ImageResponseMessage which is received in JSON format.
 	 * 
 	 * @param imageResponseJSON
 	 */
 	protected void handleImageResponseMessage(String imageResponseJSON) {
-		
+
 		log.debug("Received remote image data: " + imageResponseJSON);
 		byte[] compressedImageData = ImageResponseMessage.imagedataFromJSON(imageResponseJSON);
 		log.debug(compressedImageData);
-		//decompress the image data
+		// decompress the image data
 		byte[] decompressedImageData = Compressor.decompress(compressedImageData);
-			
+
 		// TODO: display the remote stream data.
-		//setCurrentFrame(decompressedImageData);
+		// setCurrentFrame(decompressedImageData);
 		displayFrame(decompressedImageData);
-		
+
 	}
 
 	/**
 	 * Waits and receives streaming messages from the remote host.
-	 *
+	 * 
 	 * @throws IOException
 	 */
 	protected void listen() throws IOException {
@@ -105,8 +110,8 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 		while (true) {
 			String response = buffer.receive();
 			log.debug("Got Response: " + response);
-			//check if we got an image response message
-			if(MessageFactory.getMessageType(response).equals(Strings.IMAGE_RESONSE_MESSAGE)) {
+			// check if we got an image response message
+			if (MessageFactory.getMessageType(response).equals(Strings.IMAGE_RESONSE_MESSAGE)) {
 				handleImageResponseMessage(response);
 			}
 		}

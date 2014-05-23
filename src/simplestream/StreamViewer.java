@@ -36,7 +36,7 @@ public class StreamViewer {
 
 		// Attach a listener for the Enter key to shutdown the program.
 		myViewer.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-						KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "shutdownAction");
+			KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "shutdownAction");
 		myViewer.getActionMap().put("shutdownAction", shutdownAction);
 	}
 

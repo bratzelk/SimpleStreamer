@@ -12,12 +12,13 @@ import simplestream.Compressor;
 import simplestream.Peer;
 import simplestream.client.StreamClient;
 import simplestream.client.WebcamStreamer;
+
 import common.Strings;
 
 /**
  * Services a single {@link StreamClient} by responding to requests and streaming webcam data when
  * applicable.
- *
+ * 
  * New {@link ClientHandler}s start themselves on their own thread, so calling {@link #stop()} will
  * stop the handler gracefully and clean up all necessary resources.
  */
@@ -96,7 +97,7 @@ public class ClientHandler implements Runnable {
 
 	/**
 	 * Constructs an {@link ImageResponseMessage} to send to the client.
-	 *
+	 * 
 	 * @return The constructed message.
 	 */
 	protected Message buildImageMessage() {

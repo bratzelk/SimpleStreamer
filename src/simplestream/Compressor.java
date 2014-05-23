@@ -1,7 +1,6 @@
 package simplestream;
 
 import java.io.ByteArrayInputStream;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
@@ -18,7 +17,7 @@ public class Compressor {
 
 	/**
 	 * Compresses the given bytes using GZIP.
-	 *
+	 * 
 	 * @param content The data to compress.
 	 * @return The compressed data.
 	 */
@@ -38,7 +37,7 @@ public class Compressor {
 
 	/**
 	 * Decompresses the given bytes using GZIP.
-	 *
+	 * 
 	 * @param content The data to decompress.
 	 * @return The decompressed data.
 	 */
@@ -54,7 +53,7 @@ public class Compressor {
 
 	/**
 	 * Determines whether data of the given type is worth compressing.
-	 *
+	 * 
 	 * @param contentType The type of data to decide on compression for.
 	 * @return True if the data is not already well-compressed, false otherwise.
 	 */

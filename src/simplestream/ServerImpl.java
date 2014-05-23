@@ -26,40 +26,41 @@ public class ServerImpl implements Server {
 	protected OutputStream outputStream;
 	protected ObjectOutputStream objectOutputStream;
 
-    public ServerImpl(int port) throws IOException {
+	public ServerImpl(int port) throws IOException {
 
-    	this.serverSocket = new ServerSocket(port);
+		this.serverSocket = new ServerSocket(port);
 
-    }
+	}
 
 	public void waitForConnection() throws IOException, ClassNotFoundException {
 
-    	//Sit and wait for a client to connect...
-        while(true){
-           connectionSocket = serverSocket.accept();
+		// Sit and wait for a client to connect...
+		while (true) {
+			connectionSocket = serverSocket.accept();
 
-           inputStream = connectionSocket.getInputStream();
-           objectInputStream = new ObjectInputStream(inputStream);
+			inputStream = connectionSocket.getInputStream();
+			objectInputStream = new ObjectInputStream(inputStream);
 
-           outputStream = connectionSocket.getOutputStream();
-           objectOutputStream = new ObjectOutputStream(outputStream);
+			outputStream = connectionSocket.getOutputStream();
+			objectOutputStream = new ObjectOutputStream(outputStream);
 
 
-           //This is totally wrong atm, should be waiting for JSON
-           //Message requestMessage = (Message)objectInputStream.readObject();
+			// This is totally wrong atm, should be waiting for JSON
+			// Message requestMessage = (Message)objectInputStream.readObject();
 
-           break;
-        }
+			break;
+		}
 
-        //Send a JSON Response...
+		// Send a JSON Response...
 
-        Message responseMessage = MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
+		Message responseMessage = MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
 
-        Socket socket = new Socket(Settings.DEFAULT_HOSTNAME, Settings.DEFAULT_REMOTE_PORT);
+		Socket socket = new Socket(Settings.DEFAULT_HOSTNAME, Settings.DEFAULT_REMOTE_PORT);
 
-        try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8)) {
-        	outputStreamWriter.write(responseMessage.toJSON());
-        }
+		try (OutputStreamWriter outputStreamWriter =
+			new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8)) {
+			outputStreamWriter.write(responseMessage.toJSON());
+		}
 
-    }
+	}
 }

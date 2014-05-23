@@ -55,7 +55,7 @@ public class ConnectionBuffer {
 
 	/**
 	 * Reads in request data from the input stream of the socket.
-	 *
+	 * 
 	 * @return The contents of the request message.
 	 * @throws IOException
 	 */
@@ -67,7 +67,7 @@ public class ConnectionBuffer {
 
 	/**
 	 * Sends a message without waiting for a response.
-	 *
+	 * 
 	 * @param message The message to send.
 	 * @throws IOException
 	 */
@@ -78,7 +78,7 @@ public class ConnectionBuffer {
 
 	/**
 	 * Sends a {@link Message} without waiting for a response.
-	 *
+	 * 
 	 * @param message The message to send.
 	 * @throws IOException
 	 */
@@ -88,7 +88,7 @@ public class ConnectionBuffer {
 
 	/**
 	 * Sends a message via the socket.
-	 *
+	 * 
 	 * @param message The message to send.
 	 * @return The response received.
 	 */
@@ -114,7 +114,7 @@ public class ConnectionBuffer {
 
 	/**
 	 * Serializes and sends the given message.
-	 *
+	 * 
 	 * @param message The {@link Message} to send.
 	 * @return The response received.
 	 */
@@ -124,7 +124,7 @@ public class ConnectionBuffer {
 
 	/**
 	 * Cleans up any {@link Resources} being used.
-	 *
+	 * 
 	 * @throws IOException
 	 */
 	public void close() throws IOException {

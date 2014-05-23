@@ -8,11 +8,11 @@ import simplestream.Webcam;
 public class LocalWebcamStreamer extends WebcamStreamerImpl {
 
 	public LocalWebcamStreamer(Webcam webcam, int streamingRate, boolean display) {
-		super(webcam,streamingRate, display);
+		super(webcam, streamingRate, display);
 	}
 
 	public LocalWebcamStreamer(Webcam webcam, int streamingRate) {
-		super(webcam,streamingRate);
+		super(webcam, streamingRate);
 	}
 
 	@Override

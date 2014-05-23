@@ -12,6 +12,7 @@ import simplestream.Webcam;
 import simplestream.client.LocalWebcamStreamer;
 import simplestream.client.StreamClient;
 import simplestream.server.StreamServer;
+
 import common.Out;
 import common.Settings;
 import common.Strings;
@@ -81,7 +82,7 @@ public class SimpleStreamApplication {
 
 	/**
 	 * This will parse command line args and read them into our class variables
-	 *
+	 * 
 	 * On error the system will exit.
 	 */
 	private void readCommandLineArgs(String[] args) {

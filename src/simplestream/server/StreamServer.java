@@ -47,7 +47,7 @@ public class StreamServer {
 			try {
 				ConnectionBuffer buffer = new ConnectionBuffer(clientSocket);
 				Message statusMessage =
-								MessageFactory.createMessage(Strings.STATUS_RESONSE_MESSAGE);
+					MessageFactory.createMessage(Strings.STATUS_RESONSE_MESSAGE);
 				buffer.send(statusMessage.toJSON());
 
 				if (clients.size() < Settings.MAX_CONNECTIONS) {
@@ -64,7 +64,7 @@ public class StreamServer {
 	/**
 	 * Responds to a client attempting to connect to an overloaded server with the list of existing
 	 * clients streaming from the same server.
-	 *
+	 * 
 	 * @param buffer The {@link ConnectionBuffer} to the prospective client.
 	 * @throws IOException
 	 */
@@ -80,11 +80,11 @@ public class StreamServer {
 
 	/**
 	 * Wraps a connection listener on a new thread that
-	 *
+	 * 
 	 * @param streamingPort The port to stream
 	 */
 	public StreamServer(final WebcamStreamer webcam, final int streamingRate,
-					final int streamingPort) {
+		final int streamingPort) {
 		this.webcam = webcam;
 		try {
 			listener = new ConnectionListener(streamingPort, clientConnectionCallback);
@@ -96,7 +96,7 @@ public class StreamServer {
 
 	/**
 	 * Listens for and handles requests from a client represented by the {@link ConnectionBuffer}.
-	 *
+	 * 
 	 * @param buffer The connection to the client.
 	 */
 	protected void serve(ConnectionBuffer buffer) {

@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 public class StreamClient {
 
 	private final Logger log = Logger.getLogger(getClass());
-	
+
 	private int streamingRate;
 
 	/** The current client local stream manager. */
@@ -37,7 +37,7 @@ public class StreamClient {
 
 	/**
 	 * Begins receiving webcam data from a remote host.
-	 *
+	 * 
 	 * @param hostname The hostname of the remote host.
 	 * @param remotePort The connected port on the remote host.
 	 */
@@ -48,14 +48,14 @@ public class StreamClient {
 		remoteStreamer.init();
 	}
 
-//	/**
-//	 * Stops any {@link LocalWebcamStreamer} that is currently running.
-//	 */
-//	protected void killStreamer() {
-//		if (streamer != null) {
-//			streamer.stop();
-//		}
-//	}
+	// /**
+	// * Stops any {@link LocalWebcamStreamer} that is currently running.
+	// */
+	// protected void killStreamer() {
+	// if (streamer != null) {
+	// streamer.stop();
+	// }
+	// }
 
 	public int getStreamingRate() {
 		return streamingRate;

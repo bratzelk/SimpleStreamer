@@ -6,7 +6,7 @@ package common;
 public class Settings {
 	/**
 	 * Default Settings
-	 *
+	 * 
 	 * These are the Default Values but can be changed at runtime in the GUI or through the command
 	 * line
 	 */

@@ -22,7 +22,7 @@ public class ConnectionListener extends Thread {
 	public static interface Callback {
 		/**
 		 * Invoked when a new client connection {@link Socket} is established.
-		 *
+		 * 
 		 * @param clientSocket The {@link Socket} established with the requesting client.
 		 */
 		public void onRequest(Socket clientSocket);
@@ -39,10 +39,12 @@ public class ConnectionListener extends Thread {
 			Socket clientSocket;
 			try {
 				if (!socket.isClosed()) {
-					log.debug("Server listening for connections on port " + socket.getLocalPort() + "...");
+					log.debug("Server listening for connections on port " + socket.getLocalPort()
+						+ "...");
 					clientSocket = socket.accept();
 					i++;
-					log.debug("Received connection " + i + " from " + clientSocket.getRemoteSocketAddress());
+					log.debug("Received connection " + i + " from "
+						+ clientSocket.getRemoteSocketAddress());
 					callback.onRequest(clientSocket);
 				}
 			} catch (IOException e) {
