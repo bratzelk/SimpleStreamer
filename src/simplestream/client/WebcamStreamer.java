@@ -8,7 +8,7 @@ public interface WebcamStreamer {
 	/**
 	 * Initializes the streamer.
 	 */
-	public void init();
+	public void start();
 
 	/**
 	 * Gets the next frame of webcam image data to display.

@@ -3,54 +3,41 @@ package simplestream.client;
 import org.apache.log4j.Logger;
 
 import simplestream.StreamViewer;
-import simplestream.Webcam;
+import simplestream.webcam.LocalWebcam;
 
 /**
  * Implements logic common to managing and rendering data streams from webcams, both local and
  * remote.
  */
-public abstract class WebcamStreamerImpl implements WebcamStreamer, Runnable {
+public abstract class WebcamStreamerImpl extends Thread implements WebcamStreamer, Runnable {
 
 	protected final Logger log = Logger.getLogger(getClass());
 
-	/** The webcam from which the stream is being read. */
-	private Webcam webcam;
+	/** The localWebcam from which the stream is being read. */
+	private LocalWebcam localWebcam;
 
-	/** The viewer in which to render the local webcam images. */
+	/** The viewer in which to render the local localWebcam images. */
 	private StreamViewer viewer;
 
 	protected int streamingRate;
 	private boolean running = true;
 	private byte[] currentFrame;
-	/** Whether to render the output of the local webcam. */
-	private boolean display;
 
-	private final Thread thread;
-
-	public WebcamStreamerImpl(Webcam webcam, int streamingRate, boolean display) {
-		setWebcam(webcam);
+	public WebcamStreamerImpl(LocalWebcam localWebcam, int streamingRate, Runnable exitCallback) {
+		this.viewer = new StreamViewer(exitCallback);
+		setWebcam(localWebcam);
 		setStreamingRate(streamingRate);
-		setDisplay(display);
 
 		log.debug("Running " + this + " on new thread...");
-		thread = new Thread(this);
-	}
-
-	public WebcamStreamerImpl(Webcam webcam, int streamingRate) {
-		this(webcam, streamingRate, true);
-	}
-
-	public void init() {
-		thread.start();
 	}
 
 	/**
-	 * Gets the next frame of webcam image data to display.
+	 * Gets the next frame of localWebcam image data to display.
 	 *
 	 * @return The image data.
 	 */
 	public byte[] getFrame() {
-		return webcam.getImage();
+		return localWebcam.getImage();
 	}
 
 	/**
@@ -63,40 +50,19 @@ public abstract class WebcamStreamerImpl implements WebcamStreamer, Runnable {
 		viewer.addImage(imageData);
 	}
 
-	/**
-	 * Sets whether the display the local webcam on the local host or not. If so, a window is
-	 * created to render the images; otherwise any existing window is closed.
-	 *
-	 * @param display Whether to display the local images.
-	 */
-	public void setDisplay(boolean display) {
-		if (display == this.display) return;
-
-		this.display = display;
-		if (display) {
-			viewer = new StreamViewer();
-		} else {
-			viewer.close();
-		}
-	}
-
-	public boolean isDisplaying() {
-		return display;
-	}
-
 	public synchronized void start() {
 		running = true;
 		notifyAll();
 	}
 
 	/**
-	 * Stops streaming webcam data.
+	 * Stops streaming localWebcam data.
 	 */
 	public void kill() {
 		log.debug("Stopping " + this + "...");
 		setRunning(false);
-		if (thread.isAlive()) {
-			thread.interrupt();
+		if (isAlive()) {
+			interrupt();
 		}
 	}
 
@@ -108,12 +74,12 @@ public abstract class WebcamStreamerImpl implements WebcamStreamer, Runnable {
 		this.streamingRate = streamingRate;
 	}
 
-	protected Webcam getWebcam() {
-		return webcam;
+	protected LocalWebcam getWebcam() {
+		return localWebcam;
 	}
 
-	protected void setWebcam(Webcam webcam) {
-		this.webcam = webcam;
+	protected void setWebcam(LocalWebcam localWebcam) {
+		this.localWebcam = localWebcam;
 	}
 
 	public StreamViewer getViewer() {

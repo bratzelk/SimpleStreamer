@@ -22,8 +22,9 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 
 	private ConnectionBuffer buffer;
 
-	public RemoteWebcamStreamer(int streamingRate, String remoteHostname, int remotePort) {
-		super(null, streamingRate);
+	public RemoteWebcamStreamer(int streamingRate, Runnable exitCallback, String remoteHostname,
+		int remotePort) {
+		super(null, streamingRate, exitCallback);
 		this.remoteHostname = remoteHostname;
 		this.remotePort = remotePort;
 	}
@@ -101,7 +102,7 @@ public class RemoteWebcamStreamer extends WebcamStreamerImpl {
 	 * @param json The content of the {@link ImageResponseMessage}.
 	 */
 	protected void handleImageResponseMessage(String json) {
-		byte[] compressedImageData = ImageResponseMessage.imagedataFromJson(json);
+		byte[] compressedImageData = ImageResponseMessage.imageDataFromJson(json);
 		byte[] decompressedImageData = Compressor.decompress(compressedImageData);
 		displayFrame(decompressedImageData);
 	}

@@ -1,6 +1,5 @@
 package simplestream;
 
-
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -8,9 +7,9 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.apache.log4j.Logger;
 
 /**
  * I made this very quickly by copying the code from Aaron's LocalView class. It should work the
@@ -19,9 +18,24 @@ import javax.swing.KeyStroke;
  */
 public class StreamViewer {
 
+	private static final Logger log = Logger.getLogger(StreamViewer.class);
+
 	private final Viewer myViewer;
 	private final JFrame frame;
-	private Runnable exitCallback;
+	private final Runnable exitCallback;
+
+	// Listen for a shutdown action, then invoke the exit callback.
+	@SuppressWarnings("serial")
+	Action shutdownAction = new AbstractAction() {
+		public void actionPerformed(ActionEvent e) {
+			if (exitCallback != null) {
+				exitCallback.run();
+			} else {
+				log.warn("No exit callback to run on " + this);
+			}
+			close();
+		}
+	};
 
 	/**
 	 * Creates a new {@link StreamViewer} instance to display webcam images.
@@ -47,23 +61,6 @@ public class StreamViewer {
 		myViewer.getActionMap().put("shutdownAction", shutdownAction);
 	}
 
-	public StreamViewer() {
-		this(null);
-	}
-
-	// Listen for a shutdown action, then invoke the exit callback.
-	@SuppressWarnings("serial")
-	Action shutdownAction = new AbstractAction() {
-		public void actionPerformed(ActionEvent e) {
-			if (exitCallback != null) {
-				exitCallback.run();
-			} else {
-				System.out.println("No clean shutdown callback to run");
-			}
-			close();
-		}
-	};
-
 	/**
 	 * Add a frame which is displayed by the viewer This data should be de-compressed etc and ready
 	 * to be viewed.
@@ -78,10 +75,6 @@ public class StreamViewer {
 	 */
 	public void close() {
 		frame.dispose();
-	}
-
-	public void setExitCallback(Runnable exitCallback) {
-		this.exitCallback = exitCallback;
 	}
 
 }

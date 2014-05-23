@@ -1,18 +1,14 @@
 package simplestream.client;
 
-import simplestream.Webcam;
+import simplestream.webcam.LocalWebcam;
 
 /**
  * Displays a webcam stream from the default camera.
  */
 public class LocalWebcamStreamer extends WebcamStreamerImpl {
 
-	public LocalWebcamStreamer(Webcam webcam, int streamingRate, boolean display) {
-		super(webcam, streamingRate, display);
-	}
-
-	public LocalWebcamStreamer(Webcam webcam, int streamingRate) {
-		super(webcam, streamingRate);
+	public LocalWebcamStreamer(LocalWebcam localWebcam, int streamingRate, Runnable exitCallback) {
+		super(localWebcam, streamingRate, exitCallback);
 	}
 
 	/**
@@ -35,9 +31,7 @@ public class LocalWebcamStreamer extends WebcamStreamerImpl {
 				log.debug("Waiting for the local streamer to start...");
 			} else {
 				setCurrentFrame(getFrame());
-				if (isDisplaying()) {
-					displayFrame(getCurrentFrame());
-				}
+				displayFrame(getCurrentFrame());
 			}
 
 			// Wait until it's time to display the next frame.

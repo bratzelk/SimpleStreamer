@@ -1,4 +1,4 @@
-package simplestream;
+package simplestream.webcam;
 
 import org.bridj.Pointer;
 
@@ -6,12 +6,15 @@ import com.github.sarxos.webcam.ds.buildin.natives.Device;
 import com.github.sarxos.webcam.ds.buildin.natives.DeviceList;
 import com.github.sarxos.webcam.ds.buildin.natives.OpenIMAJGrabber;
 
-public class Webcam {
+/**
+ * Accesses the local machine webcam to grab images from.
+ */
+public class LocalWebcam implements Webcam {
 
 	OpenIMAJGrabber grabber;
 	Device device;
 
-	public Webcam() {
+	public LocalWebcam() {
 		grabber = new OpenIMAJGrabber();
 
 		device = null;

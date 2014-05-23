@@ -8,11 +8,9 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
-import simplestream.Webcam;
-import simplestream.client.LocalWebcamStreamer;
 import simplestream.client.StreamClient;
-import simplestream.client.WebcamStreamer;
 import simplestream.server.StreamServer;
+import simplestream.webcam.LocalWebcam;
 import common.Out;
 import common.Settings;
 import common.Strings;
@@ -37,11 +35,23 @@ public class SimpleStreamApplication {
 	@Option(name = "-rate", usage = "Streaming Rate")
 	private int streamingRate = Settings.DEFAULT_STREAMING_RATE;
 
-	/** The {@link WebcamStreamer} for the local webcam, to be shared by the server and client. */
-	private LocalWebcamStreamer streamer;
-
 	private StreamServer server;
 	private StreamClient client;
+
+	/**
+	 * A callback to invoke to shut down the whole application gracefully, including streaming
+	 * connections remote hosts.
+	 */
+	private final Runnable exitCallback = new Runnable() {
+		@Override
+		public void run() {
+			try {
+				stop();
+			} catch (IOException e) {
+				log.error("Failed to exit cleanly", e);
+			}
+		}
+	};
 
 	/**
 	 * @param args
@@ -61,13 +71,13 @@ public class SimpleStreamApplication {
 		Out.printHeading(Settings.APP_NAME + " " + Settings.APP_VERSION);
 
 		// Create a shared streamer for the local webcam.
-		streamer = new LocalWebcamStreamer(new Webcam(), streamingRate);
+		LocalWebcam localWebcam = new LocalWebcam();
 
 		log.debug("Creating server...");
-		server = new StreamServer(streamer, streamingRate, streamingPort);
+		server = new StreamServer(localWebcam, streamingRate, streamingPort);
 
 		log.debug("Creating client...");
-		client = new StreamClient(streamer, streamingRate);
+		client = new StreamClient(localWebcam, streamingRate, exitCallback);
 
 		if (isLocal()) {
 			log.debug("Initiating local webcam stream...");
@@ -76,18 +86,6 @@ public class SimpleStreamApplication {
 			log.debug("Initiating remote webcam stream...");
 			client.switchToRemote(hostname, remotePort);
 		}
-
-		// When the viewer is closed, stop and clean up the whole application.
-		streamer.getViewer().setExitCallback(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					stop();
-				} catch (IOException e) {
-					log.error("Failed to exit cleanly", e);
-				}
-			}
-		});
 	}
 
 	/**
@@ -95,7 +93,6 @@ public class SimpleStreamApplication {
 	 */
 	public void stop() throws IOException {
 		log.debug("Stopping application...");
-		streamer.kill();
 		server.kill();
 		client.kill();
 	}

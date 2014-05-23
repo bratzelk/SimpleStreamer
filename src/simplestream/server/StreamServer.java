@@ -12,10 +12,10 @@ import messages.StatusResponseMessage;
 import org.apache.log4j.Logger;
 
 import simplestream.Peer;
-import simplestream.client.WebcamStreamer;
 import simplestream.networking.ConnectionBuffer;
 import simplestream.networking.ConnectionListener;
 import simplestream.networking.ConnectionListener.Callback;
+import simplestream.webcam.LocalWebcam;
 import common.Settings;
 import common.Strings;
 
@@ -30,8 +30,11 @@ public class StreamServer {
 	/** Listens for new incoming connections. */
 	private ConnectionListener listener;
 
-	/** A stream from the webcam local to this host to be sent to remote clients. */
-	private WebcamStreamer webcam;
+	/** A stream from the localWebcam local to this host to be sent to remote clients. */
+	private LocalWebcam localWebcam;
+
+	/** The rate to display localWebcam images at. */
+	private final int streamingRate;
 
 	/** The collection of clients that have connected and are being serviced. */
 	private Collection<ClientHandler> clients = new ArrayList<ClientHandler>();
@@ -84,9 +87,9 @@ public class StreamServer {
 	 *
 	 * @param streamingPort The port to stream
 	 */
-	public StreamServer(final WebcamStreamer webcam, final int streamingRate,
-		final int streamingPort) {
-		this.webcam = webcam;
+	public StreamServer(final LocalWebcam localWebcam, final int streamingRate, final int streamingPort) {
+		this.localWebcam = localWebcam;
+		this.streamingRate = streamingRate;
 		try {
 			listener = new ConnectionListener(streamingPort, clientConnectionCallback);
 			listener.start();
@@ -102,7 +105,7 @@ public class StreamServer {
 	 */
 	protected void serve(ConnectionBuffer buffer) {
 		log.debug("Serving client " + buffer);
-		ClientHandler client = new ClientHandler(buffer, webcam);
+		ClientHandler client = new ClientHandler(buffer, localWebcam, streamingRate);
 		clients.add(client);
 	}
 
@@ -111,7 +114,6 @@ public class StreamServer {
 	 */
 	public void kill() {
 		log.debug("Shutting down StreamServer...");
-		webcam.kill();
 		try {
 			listener.kill();
 		} catch (IOException e) {
@@ -122,5 +124,4 @@ public class StreamServer {
 		}
 		log.debug("StreamServer shut down");
 	}
-
 }

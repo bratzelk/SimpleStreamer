@@ -10,8 +10,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import javax.annotation.Resources;
-
 import messages.Message;
 
 import org.apache.log4j.Logger;
