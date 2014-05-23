@@ -23,7 +23,7 @@ public class MessageFactory {
 			return new StartResponseMessage();
 		} else if (messageType.equals(Strings.STATUS_RESONSE_MESSAGE)) {
 			return new StatusResponseMessage();
-		} else if (messageType.equals(Strings.IMAGE_RESONSE_MESSAGE)) {
+		} else if (messageType.equals(Strings.IMAGE_RESPONSE_MESSAGE)) {
 			return new ImageResponseMessage();
 		} else if (messageType.equals(Strings.STOP_REQUEST_MESSAGE)) {
 			return new StopRequestMessage();
@@ -37,6 +37,8 @@ public class MessageFactory {
 	}
 
 	public static String getMessageType(String messageJson) {
+		if (messageJson == null) return null;
+
 		JSONObject obj;
 		try {
 			obj = (JSONObject) parser.parse(messageJson);

@@ -93,8 +93,8 @@ public class SimpleStreamApplication {
 	 */
 	public void stop() throws IOException {
 		log.debug("Stopping application...");
-		server.kill();
 		client.kill();
+		server.kill();
 	}
 
 	/**

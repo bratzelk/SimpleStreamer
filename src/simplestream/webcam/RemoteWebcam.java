@@ -90,18 +90,16 @@ public class RemoteWebcam implements Webcam {
 
 	/**
 	 * Sends a request to the remote peer to stop streaming image data.
+	 *
+	 * @throws IOException
 	 */
-	protected void stopStreaming() {
-		try {
-			buffer.send(MessageFactory.createMessage(Strings.STOP_REQUEST_MESSAGE));
-		} catch (IOException e) {
-			log.error("Failed to perform clean exit", e);
-		}
+	public void stopStreaming() throws IOException {
+		buffer.send(MessageFactory.createMessage(Strings.STOP_REQUEST_MESSAGE));
 	}
 
 	/**
-	 * Runs a thread that listens for image data simplestream.messages on the local
-	 * {@link ConnectionBuffer} from the remote peer and saves them they are received.
+	 * Runs a thread that listens for image data messages on the local {@link ConnectionBuffer} from
+	 * the remote peer and saves them they are received.
 	 */
 	protected void listen() {
 		// Set up the local stream listener.
@@ -120,12 +118,18 @@ public class RemoteWebcam implements Webcam {
 					}
 
 					// If the message was an image response message, save it as the current frame.
-					if (MessageFactory.getMessageType(response).equals(
-						Strings.IMAGE_RESONSE_MESSAGE)) {
-						byte[] compressedImageData =
-							ImageResponseMessage.imageDataFromJson(response);
-						byte[] decompressedImageData = Compressor.decompress(compressedImageData);
-						setCurrentFrame(decompressedImageData);
+					String messageType = MessageFactory.getMessageType(response);
+					if (messageType == null) {
+						throw new IllegalStateException("Received null message type");
+					}
+					switch (messageType) {
+						case Strings.IMAGE_RESPONSE_MESSAGE:
+							handleImageMessage(response);
+							break;
+						case Strings.STOPPED_RESPONSE_MESSAGE:
+							log.debug(this + " peer acknowledged stop request, shutting down...");
+							kill();
+							return;
 					}
 				}
 			}
@@ -134,6 +138,17 @@ public class RemoteWebcam implements Webcam {
 
 		// Start streaming data from the remote host.
 		startStreaming();
+	}
+
+	/**
+	 * Handles the content of an image response message, saving the image data as the current frame.
+	 *
+	 * @param messageJson The JSON content of the message.
+	 */
+	protected void handleImageMessage(String messageJson) {
+		byte[] compressedImageData = ImageResponseMessage.imageDataFromJson(messageJson);
+		byte[] decompressedImageData = Compressor.decompress(compressedImageData);
+		setCurrentFrame(decompressedImageData);
 	}
 
 	/**
@@ -148,8 +163,12 @@ public class RemoteWebcam implements Webcam {
 	public void kill() {
 		log.debug("Shutting down " + this + "...");
 		listenThread.interrupt();
-		stopStreaming();
-		log.debug(this + " shut down successfull");
+		try {
+			buffer.kill();
+		} catch (IOException e) {
+			log.error("Error shutting down " + buffer, e);
+		}
+		log.debug(this + " shut down successful");
 	}
 
 	public synchronized byte[] getCurrentFrame() {

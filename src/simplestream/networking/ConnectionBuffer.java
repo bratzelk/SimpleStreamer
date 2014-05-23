@@ -65,7 +65,10 @@ public class ConnectionBuffer {
 	 */
 	public String receive() throws IOException {
 		String response = reader.readLine();
-		log.debug(this + " Received response: " + truncate(response, 40));
+		String print = truncate(response, 40);
+		if (print != null) {
+			log.debug(this + " Received response: " + truncate(response, 40));
+		}
 		return response;
 	}
 
@@ -134,7 +137,9 @@ public class ConnectionBuffer {
 	 * @return The truncated message.
 	 */
 	protected String truncate(String message, int maxLength) {
-		if (message.length() > maxLength) {
+		if (message == null) {
+			return null;
+		} else if (message.length() > maxLength) {
 			return message.substring(0, maxLength) + "...";
 		}
 		return message;

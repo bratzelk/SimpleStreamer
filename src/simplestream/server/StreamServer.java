@@ -105,6 +105,7 @@ public class StreamServer {
 	protected void serve(ConnectionBuffer buffer) {
 		log.debug("Serving client " + buffer);
 		ClientHandler client = new ClientHandler(buffer, localWebcam, streamingRate);
+		client.run();
 		clients.add(client);
 	}
 

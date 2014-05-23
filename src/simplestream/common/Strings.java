@@ -49,7 +49,7 @@ public class Strings {
 	public static final String START_REQUEST_MESSAGE = "startstream";
 	public static final String START_RESONSE_MESSAGE = "startingstream";
 	public static final String STATUS_RESONSE_MESSAGE = "status";
-	public static final String IMAGE_RESONSE_MESSAGE = "image";
+	public static final String IMAGE_RESPONSE_MESSAGE = "image";
 	public static final String STOP_REQUEST_MESSAGE = "stopstream";
 	public static final String STOPPED_RESPONSE_MESSAGE = "stoppedstream";
 	public static final String OVERLOADED_RESPONSE_MESSAGE = "overloaded";

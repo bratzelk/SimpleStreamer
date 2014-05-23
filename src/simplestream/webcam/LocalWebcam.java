@@ -49,7 +49,7 @@ public class LocalWebcam implements Webcam {
 	@Override
 	public void kill() {
 		log.debug("Shutting down " + this + "...");
-		grabber.stopSession();
+		// grabber.stopSession(); // This causes things to crash.
 		log.debug(this + " shut down successfully");
 	}
 

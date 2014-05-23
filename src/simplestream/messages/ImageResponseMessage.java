@@ -15,7 +15,7 @@ public class ImageResponseMessage extends ResponseMessage {
 
 	@Override
 	public String getType() {
-		return Strings.IMAGE_RESONSE_MESSAGE;
+		return Strings.IMAGE_RESPONSE_MESSAGE;
 	}
 
 

@@ -1,5 +1,7 @@
 package simplestream.client;
 
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
 
 import simplestream.webcam.LocalWebcam;
@@ -99,7 +101,13 @@ public class StreamClient {
 			localWebcam.kill();
 		}
 		if (remoteWebcam != null) {
-			remoteWebcam.kill();
+			// Don't call kill(); stopStreaming will kill the webcam once it is disconnected.
+			try {
+				remoteWebcam.stopStreaming();
+			} catch (IOException e) {
+				log.error("Failed to stop streaming cleanly, killing...", e);
+				remoteWebcam.kill();
+			}
 		}
 		viewerThread.interrupt();
 		viewer.close();
