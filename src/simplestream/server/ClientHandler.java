@@ -2,18 +2,17 @@ package simplestream.server;
 
 import java.io.IOException;
 
-import messages.ImageResponseMessage;
-import messages.Message;
-import messages.MessageFactory;
-
 import org.apache.log4j.Logger;
 
-import simplestream.Compressor;
-import simplestream.Peer;
 import simplestream.client.StreamClient;
+import simplestream.common.Strings;
+import simplestream.messages.ImageResponseMessage;
+import simplestream.messages.Message;
+import simplestream.messages.MessageFactory;
+import simplestream.networking.Compressor;
 import simplestream.networking.ConnectionBuffer;
+import simplestream.networking.Peer;
 import simplestream.webcam.LocalWebcam;
-import common.Strings;
 
 /**
  * Services a single {@link StreamClient} by responding to requests and streaming localWebcam data when
@@ -78,7 +77,7 @@ public class ClientHandler implements Runnable {
 		}
 		log.debug("Transitioning to sending image data...");
 
-		// Set up a listener for stopstream messages.
+		// Set up a listener for stopstream simplestream.messages.
 		listenForStop();
 
 		while (true) {

@@ -1,10 +1,10 @@
-package messages;
+package simplestream.messages;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import common.Strings;
+import simplestream.common.Strings;
 
 /**
  * Creates default {@link Message} objects of the given type.

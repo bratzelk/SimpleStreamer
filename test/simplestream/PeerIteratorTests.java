@@ -1,4 +1,4 @@
-package tests;
+package simplestream;
 
 import static org.junit.Assert.assertTrue;
 
@@ -8,9 +8,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import simplestream.BFSPeerIterator;
-import simplestream.NoUnseenPeersException;
-import simplestream.Peer;
+import simplestream.networking.Peer;
+import simplestream.server.BFSPeerIterator;
+import simplestream.server.NoUnseenPeersException;
 
 
 public class PeerIteratorTests {

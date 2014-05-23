@@ -1,4 +1,4 @@
-package messages;
+package simplestream.messages;
 
 import org.json.simple.JSONObject;
 

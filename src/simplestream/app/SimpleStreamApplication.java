@@ -9,11 +9,10 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
 import simplestream.client.StreamClient;
+import simplestream.common.Settings;
+import simplestream.common.Strings;
 import simplestream.server.StreamServer;
 import simplestream.webcam.LocalWebcam;
-import common.Out;
-import common.Settings;
-import common.Strings;
 
 
 public class SimpleStreamApplication {
@@ -68,7 +67,7 @@ public class SimpleStreamApplication {
 	 * Sets up the client and server components. All command line arguments should have been parsed.
 	 */
 	public void init() {
-		Out.printHeading(Settings.APP_NAME + " " + Settings.APP_VERSION);
+		log.debug(Settings.APP_NAME + " " + Settings.APP_VERSION);
 
 		// Create a shared streamer for the local webcam.
 		LocalWebcam localWebcam = new LocalWebcam();
@@ -110,8 +109,8 @@ public class SimpleStreamApplication {
 			parser.parseArgument(args);
 		} catch (CmdLineException e) {
 			// if there's a problem with the args.
-			Out.error(e.getMessage());
-			Out.error("Usage is: java -jar SimpleStreamer.jar [-sport X] [-remote hostname [-rport Y]] [-rate Z]");
+			log.error(e);
+			log.error("Usage is: java -jar SimpleStreamer.jar [-sport X] [-remote hostname [-rport Y]] [-rate Z]");
 			parser.printUsage(System.err);
 			System.exit(-1);
 		}

@@ -5,19 +5,18 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import messages.Message;
-import messages.MessageFactory;
-import messages.StatusResponseMessage;
-
 import org.apache.log4j.Logger;
 
-import simplestream.Peer;
+import simplestream.common.Settings;
+import simplestream.common.Strings;
+import simplestream.messages.Message;
+import simplestream.messages.MessageFactory;
+import simplestream.messages.StatusResponseMessage;
 import simplestream.networking.ConnectionBuffer;
 import simplestream.networking.ConnectionListener;
+import simplestream.networking.Peer;
 import simplestream.networking.ConnectionListener.Callback;
 import simplestream.webcam.LocalWebcam;
-import common.Settings;
-import common.Strings;
 
 /**
  * Wraps and runs a {@link ConnectionListener} on a new thread to catch incoming connections. New

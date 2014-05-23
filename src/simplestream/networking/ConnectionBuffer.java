@@ -10,14 +10,12 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import messages.Message;
-
 import org.apache.log4j.Logger;
 
-import simplestream.Peer;
+import simplestream.messages.Message;
 
 /**
- * Sends and receives messages between hosts.
+ * Sends and receives simplestream.messages between hosts.
  *
  * @see http://docs.oracle.com/javase/tutorial/networking/sockets/readingWriting.html
  */
@@ -31,10 +29,10 @@ public class ConnectionBuffer {
 	/** Details of the client machine. */
 	private final Peer peer;
 
-	/** Reads in messages received by the socket. */
+	/** Reads in simplestream.messages received by the socket. */
 	private final BufferedReader reader;
 
-	/** Writes messages out to the socket. */
+	/** Writes simplestream.messages out to the socket. */
 	private final PrintWriter writer;
 
 	public ConnectionBuffer(Socket socket) throws IOException {

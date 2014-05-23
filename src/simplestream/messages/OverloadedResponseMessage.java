@@ -1,4 +1,4 @@
-package messages;
+package simplestream.messages;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,9 +6,8 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import simplestream.Peer;
-
-import common.Strings;
+import simplestream.common.Strings;
+import simplestream.networking.Peer;
 
 public class OverloadedResponseMessage extends ResponseMessage {
 

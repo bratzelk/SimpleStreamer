@@ -1,6 +1,6 @@
-package messages;
+package simplestream.messages;
 
-import common.Strings;
+import simplestream.common.Strings;
 
 public class StartResponseMessage extends ResponseMessage {
 

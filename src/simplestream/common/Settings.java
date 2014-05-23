@@ -1,4 +1,4 @@
-package common;
+package simplestream.common;
 
 /**
  * @author Kim
@@ -6,7 +6,7 @@ package common;
 public class Settings {
 	/**
 	 * Default Settings
-	 * 
+	 *
 	 * These are the Default Values but can be changed at runtime in the GUI or through the command
 	 * line
 	 */
@@ -21,9 +21,6 @@ public class Settings {
 	/**
 	 * General Settings
 	 */
-	// Should we output lots of text... (good for debugging and for the GUI)
-	public static final Boolean VERBOSE = true;
-
 	public static final Boolean SHOW_GUI = true;
 
 	public static final int MAX_CONNECTIONS = 3;

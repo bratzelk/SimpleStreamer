@@ -2,7 +2,6 @@ package simplestream.client;
 
 import org.apache.log4j.Logger;
 
-import simplestream.StreamViewer;
 import simplestream.webcam.LocalWebcam;
 import simplestream.webcam.RemoteWebcam;
 import simplestream.webcam.Webcam;

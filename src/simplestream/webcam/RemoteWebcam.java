@@ -5,14 +5,14 @@ import java.util.Collection;
 
 import org.apache.log4j.Logger;
 
-import messages.ImageResponseMessage;
-import messages.Message;
-import messages.MessageFactory;
-import messages.StartRequestMessage;
-import simplestream.Compressor;
-import simplestream.Peer;
+import simplestream.common.Strings;
+import simplestream.messages.ImageResponseMessage;
+import simplestream.messages.Message;
+import simplestream.messages.MessageFactory;
+import simplestream.messages.StartRequestMessage;
+import simplestream.networking.Compressor;
 import simplestream.networking.ConnectionBuffer;
-import common.Strings;
+import simplestream.networking.Peer;
 
 /**
  * Treats a remote host like a webcam and returns the images received over the network on demand.
@@ -29,10 +29,10 @@ public class RemoteWebcam implements Webcam {
 	/** The details of the remote host streaming the images. */
 	private final Peer peer;
 
-	/** The connection to the remote host for sending and receiving messages. */
+	/** The connection to the remote host for sending and receiving simplestream.messages. */
 	private final ConnectionBuffer buffer;
 
-	/** The thread that is listening for new image data messages. */
+	/** The thread that is listening for new image data simplestream.messages. */
 	private Thread listenThread;
 
 	public RemoteWebcam(int streamingRate, String remoteHostname, int remotePort) {
@@ -100,8 +100,8 @@ public class RemoteWebcam implements Webcam {
 	}
 
 	/**
-	 * Runs a thread that listens for image data messages on the local {@link ConnectionBuffer} from
-	 * the remote peer and saves them they are received.
+	 * Runs a thread that listens for image data simplestream.messages on the local
+	 * {@link ConnectionBuffer} from the remote peer and saves them they are received.
 	 */
 	protected void listen() {
 		// Set up the local stream listener.

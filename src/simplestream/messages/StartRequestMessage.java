@@ -1,9 +1,9 @@
-package messages;
+package simplestream.messages;
 
 import org.json.simple.JSONObject;
 
-import common.Settings;
-import common.Strings;
+import simplestream.common.Settings;
+import simplestream.common.Strings;
 
 public class StartRequestMessage extends RequestMessage {
 

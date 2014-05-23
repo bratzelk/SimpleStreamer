@@ -1,4 +1,4 @@
-package messages;
+package simplestream.messages;
 
 import java.io.UnsupportedEncodingException;
 
@@ -6,7 +6,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import common.Strings;
+import simplestream.common.Strings;
 
 public class ImageResponseMessage extends ResponseMessage {
 

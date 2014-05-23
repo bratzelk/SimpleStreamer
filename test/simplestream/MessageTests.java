@@ -1,12 +1,12 @@
-package tests;
+package simplestream;
 
 import static org.junit.Assert.assertTrue;
-import messages.Message;
-import messages.MessageFactory;
 
 import org.junit.Test;
 
-import common.Strings;
+import simplestream.common.Strings;
+import simplestream.messages.Message;
+import simplestream.messages.MessageFactory;
 
 public class MessageTests {
 

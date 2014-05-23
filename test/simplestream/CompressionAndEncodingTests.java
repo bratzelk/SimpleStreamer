@@ -1,4 +1,4 @@
-package tests;
+package simplestream;
 
 import static org.junit.Assert.assertTrue;
 
@@ -8,7 +8,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.junit.Assert;
 import org.junit.Test;
 
-import simplestream.Compressor;
+import simplestream.networking.Compressor;
 
 public class CompressionAndEncodingTests {
 

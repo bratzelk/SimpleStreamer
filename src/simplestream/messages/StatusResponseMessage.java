@@ -1,8 +1,8 @@
-package messages;
+package simplestream.messages;
 
 import org.json.simple.JSONObject;
 
-import common.Strings;
+import simplestream.common.Strings;
 
 public class StatusResponseMessage extends ResponseMessage {
 

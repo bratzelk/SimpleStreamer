@@ -1,4 +1,4 @@
-package simplestream;
+package simplestream.client;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;

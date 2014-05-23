@@ -1,11 +1,11 @@
-package simplestream;
+package simplestream.networking;
 
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import org.json.simple.JSONObject;
 
-import common.Strings;
+import simplestream.common.Strings;
 
 public class Peer {
 

@@ -1,4 +1,4 @@
-package common;
+package simplestream.common;
 
 public class Strings {
 
@@ -40,7 +40,7 @@ public class Strings {
 	/**
 	 * Message Types Strings
 	 * 
-	 * These are strings used for messages According to the specification they are always lowercase
+	 * These are strings used for simplestream.messages According to the specification they are always lowercase
 	 * 
 	 */
 	public static final String REQUEST_MESSAGE = "request";
