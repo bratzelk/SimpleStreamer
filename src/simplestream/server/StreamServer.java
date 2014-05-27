@@ -11,6 +11,7 @@ import simplestream.common.Settings;
 import simplestream.common.Strings;
 import simplestream.messages.Message;
 import simplestream.messages.MessageFactory;
+import simplestream.messages.OverloadedResponseMessage;
 import simplestream.messages.StatusResponseMessage;
 import simplestream.networking.ConnectionBuffer;
 import simplestream.networking.ConnectionListener;
@@ -53,6 +54,8 @@ public class StreamServer {
 					MessageFactory.createMessage(Strings.STATUS_RESONSE_MESSAGE);
 				buffer.send(statusMessage.toJSON());
 
+				//If we have reached the maximum number of allowed connections
+				// then we send an overloaded response message.
 				if (clients.size() < Settings.MAX_CONNECTIONS) {
 					serve(buffer);
 				} else {
@@ -72,13 +75,21 @@ public class StreamServer {
 	 * @throws IOException
 	 */
 	protected void doHandover(ConnectionBuffer buffer) throws IOException {
-		// TODO(orlade): Create the handover message by serializing the current clients.
-		Message handoverMessage = null; // = create...
+		OverloadedResponseMessage overloadedResponse = (OverloadedResponseMessage) MessageFactory.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
+		
+		//TODO
+		//add the server if in remote mode
+		//overloadedResponse.addServer(connctedServer);
+		
+		//add the connected clients
 		for (ClientHandler client : clients) {
 			Peer peer = client.getPeer();
-			// Add to message...
+			// Add client peer to message.
+			overloadedResponse.addClient(peer);
 		}
-		buffer.send(handoverMessage);
+		buffer.send((Message)overloadedResponse);
+		
+		log.debug("Sending an overloaded response message.");
 	}
 
 	/**

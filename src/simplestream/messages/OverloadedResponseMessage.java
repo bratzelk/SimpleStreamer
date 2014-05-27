@@ -45,6 +45,25 @@ public class OverloadedResponseMessage extends ResponseMessage {
 	public void addClients(List<Peer> clients) {
 		this.connectedClients.addAll(clients);
 	}
+	
+	public List<Peer> getClients() {
+		return this.connectedClients;
+	}
+	
+	public Peer getServer() {
+		return this.connectedServer;
+	}
+	
+	public Boolean inRemoteMode() {
+		return this.inRemoteMode;
+	}
+	
+	/**
+	 * Add in a single connected client
+	 * */
+	public void addClient(Peer client) {
+		this.connectedClients.add(client);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

@@ -8,11 +8,14 @@ import org.apache.log4j.Logger;
 import simplestream.common.Strings;
 import simplestream.messages.ImageResponseMessage;
 import simplestream.messages.Message;
+import simplestream.messages.OverloadedResponseMessage;
 import simplestream.messages.MessageFactory;
 import simplestream.messages.StartRequestMessage;
 import simplestream.networking.Compressor;
 import simplestream.networking.ConnectionBuffer;
 import simplestream.networking.Peer;
+import simplestream.server.BFSPeerIterator;
+import simplestream.server.NoUnseenPeersException;
 
 /**
  * Treats a remote host like a webcam and returns the images received over the network on demand.
@@ -27,17 +30,21 @@ public class RemoteWebcam implements Webcam {
 	private int streamingRate;
 
 	/** The details of the remote host streaming the images. */
-	private final Peer peer;
+	private Peer peer;
 
 	/** The connection to the remote host for sending and receiving simplestream.messages. */
-	private final ConnectionBuffer buffer;
+	private ConnectionBuffer buffer;
 
 	/** The thread that is listening for new image data simplestream.messages. */
 	private Thread listenThread;
+	
+	private BFSPeerIterator peerIterator;
 
 	public RemoteWebcam(int streamingRate, String remoteHostname, int remotePort) {
 		this.streamingRate = streamingRate;
 		this.peer = new Peer(remoteHostname, remotePort);
+		
+		this.peerIterator = new BFSPeerIterator();
 
 		buffer = connect();
 		listen();
@@ -75,7 +82,11 @@ public class RemoteWebcam implements Webcam {
 		String responseMessageType = responseMessage.getType();
 		// Handle the overloaded response message.
 		if (responseMessageType.equals(Strings.OVERLOADED_RESPONSE_MESSAGE)) {
-			Collection<Peer> alternativeHosts = null; // TODO: Extract this from the message.
+			OverloadedResponseMessage overloadedMessage = (OverloadedResponseMessage)responseMessage;
+			Collection<Peer> alternativeHosts = overloadedMessage.getClients();
+			if(overloadedMessage.inRemoteMode()) {
+				alternativeHosts.add(overloadedMessage.getServer());
+			}
 			followHandover(alternativeHosts);
 		}
 		// Otherwise the responseMessageType should be "startingstream".
@@ -85,7 +96,28 @@ public class RemoteWebcam implements Webcam {
 	 * Tries connecting to one of the other hosts being served by the overloaded remote peer.
 	 */
 	protected void followHandover(Collection<Peer> alternativeHosts) {
+		
+		log.debug("Finding the next available Peer...");
+		
 		// TODO(kim): Handle the overloaded response message here.
+		peerIterator.addPeers(alternativeHosts);
+		
+		Peer newServer = null;
+		try {
+			newServer = peerIterator.getNextPeer();
+		} catch (NoUnseenPeersException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			log.debug("No potential servers left to try...");
+		}
+		
+		log.debug("Available Peer found: " + newServer + ". Trying to connect...");
+		
+		//TODO I'm pretty sure this isn't nice...
+		//Start the whole process again
+		this.peer = newServer;
+		buffer = connect();
+		listen();
 	}
 
 	/**
