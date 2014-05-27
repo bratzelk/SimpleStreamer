@@ -1,5 +1,6 @@
 package simplestream.messages;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 
 public abstract class Message {
@@ -13,6 +14,7 @@ public abstract class Message {
 	 * classes.
 	 * 
 	 */
+	protected final Logger log = Logger.getLogger(getClass());
 
 	/**
 	 * A message can be a request or a response message.

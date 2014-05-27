@@ -77,19 +77,6 @@ public class RemoteWebcam implements Webcam {
 
 		String response = buffer.sendAndReceive(startMessage);
 
-		Message responseMessage =
-			MessageFactory.createMessage(MessageFactory.getMessageType(response));
-		String responseMessageType = responseMessage.getType();
-		// Handle the overloaded response message.
-		if (responseMessageType.equals(Strings.OVERLOADED_RESPONSE_MESSAGE)) {
-			OverloadedResponseMessage overloadedMessage = (OverloadedResponseMessage)responseMessage;
-			Collection<Peer> alternativeHosts = overloadedMessage.getClients();
-			if(overloadedMessage.inRemoteMode()) {
-				alternativeHosts.add(overloadedMessage.getServer());
-			}
-			followHandover(alternativeHosts);
-		}
-		// Otherwise the responseMessageType should be "startingstream".
 	}
 
 	/**
@@ -162,6 +149,16 @@ public class RemoteWebcam implements Webcam {
 							log.debug(this + " peer acknowledged stop request, shutting down...");
 							kill();
 							return;
+						case Strings.OVERLOADED_RESPONSE_MESSAGE:
+							OverloadedResponseMessage overloadedMessage = (OverloadedResponseMessage) MessageFactory.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);//response;
+							overloadedMessage.populateFieldsFromJSON(response);
+							log.debug("Response was: " + overloadedMessage);
+							Collection<Peer> alternativeHosts = overloadedMessage.getClients();
+							if(overloadedMessage.inRemoteMode()) {
+								alternativeHosts.add(overloadedMessage.getServer());
+							}
+							followHandover(alternativeHosts);
+							break;
 					}
 				}
 			}
