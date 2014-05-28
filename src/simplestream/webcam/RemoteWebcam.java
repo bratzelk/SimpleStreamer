@@ -7,9 +7,8 @@ import org.apache.log4j.Logger;
 
 import simplestream.common.Strings;
 import simplestream.messages.ImageResponseMessage;
-import simplestream.messages.Message;
-import simplestream.messages.OverloadedResponseMessage;
 import simplestream.messages.MessageFactory;
+import simplestream.messages.OverloadedResponseMessage;
 import simplestream.messages.StartRequestMessage;
 import simplestream.networking.Compressor;
 import simplestream.networking.ConnectionBuffer;
@@ -37,13 +36,13 @@ public class RemoteWebcam implements Webcam {
 
 	/** The thread that is listening for new image data simplestream.messages. */
 	private Thread listenThread;
-	
+
 	private BFSPeerIterator peerIterator;
 
 	public RemoteWebcam(int streamingRate, String remoteHostname, int remotePort) {
 		this.streamingRate = streamingRate;
 		this.peer = new Peer(remoteHostname, remotePort);
-		
+
 		this.peerIterator = new BFSPeerIterator();
 
 		buffer = connect();
@@ -83,12 +82,12 @@ public class RemoteWebcam implements Webcam {
 	 * Tries connecting to one of the other hosts being served by the overloaded remote peer.
 	 */
 	protected void followHandover(Collection<Peer> alternativeHosts) {
-		
+
 		log.debug("Finding the next available Peer...");
-		
+
 		// TODO(kim): Handle the overloaded response message here.
 		peerIterator.addPeers(alternativeHosts);
-		
+
 		Peer newServer = null;
 		try {
 			newServer = peerIterator.getNextPeer();
@@ -97,9 +96,9 @@ public class RemoteWebcam implements Webcam {
 			e.printStackTrace();
 			log.debug("No potential servers left to try...");
 		}
-		
+
 		log.debug("Available Peer found: " + newServer + ". Trying to connect...");
-		
+
 		//TODO I'm pretty sure this isn't nice...
 		//Start the whole process again
 		this.peer = newServer;

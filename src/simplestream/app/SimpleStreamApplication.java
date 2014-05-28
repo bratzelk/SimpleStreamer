@@ -1,6 +1,5 @@
 package simplestream.app;
 
-
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -14,27 +13,33 @@ import simplestream.common.Strings;
 import simplestream.server.StreamServer;
 import simplestream.webcam.LocalWebcam;
 
-
+/**
+ * This is the greatest and best app in the world.
+ */
 public class SimpleStreamApplication {
 
 	private Logger log = Logger.getLogger(getClass());
 
-	// Setup the command line arguments and their default values
-
-	// this is used to set localMode, don't change
+	/** The hostname of the remote host to connect to. */
 	@Option(name = "-remote", usage = "The remote hostname", metaVar = "HOSTNAME")
 	private String hostname = Strings.EMPTY_REMOTE_HOSTNAME;
 
+	/** The port on the remote machine to connect to. */
 	@Option(name = "-rport", usage = "Remote Port Number")
 	private int remotePort = Settings.DEFAULT_REMOTE_PORT;
 
+	/** The port on the local machine to receive connections on. */
 	@Option(name = "-sport", usage = "Streaming Port Number")
 	private int streamingPort = Settings.DEFAULT_STREAMING_PORT;
 
+	/** The number of ms between remote images being sent. */
 	@Option(name = "-rate", usage = "Streaming Rate")
 	private int streamingRate = Settings.DEFAULT_STREAMING_RATE;
 
+	/** The local server component that streams out to incoming connections. */
 	private StreamServer server;
+
+	/** The local client component that displays whatever images are being streamed. */
 	private StreamClient client;
 
 	/**
@@ -53,9 +58,9 @@ public class SimpleStreamApplication {
 	};
 
 	/**
-	 * @param args
-	 * @throws MessageNotFoundException
-	 * @throws InterruptedException
+	 * The main application entry point.
+	 *
+	 * @param args Command line arguments.
 	 */
 	public static void main(String[] args) {
 		SimpleStreamApplication instance = new SimpleStreamApplication();
@@ -110,7 +115,8 @@ public class SimpleStreamApplication {
 		} catch (CmdLineException e) {
 			// if there's a problem with the args.
 			log.error(e);
-			log.error("Usage is: java -jar SimpleStreamer.jar [-sport X] [-remote hostname [-rport Y]] [-rate Z]");
+			log.error("Usage is: java -jar SimpleStreamer.jar "
+				+ "[-sport X] [-remote hostname [-rport Y]] [-rate Z]");
 			parser.printUsage(System.err);
 			System.exit(-1);
 		}
