@@ -76,7 +76,13 @@ public class RemoteWebcam implements Webcam {
 		startMessage.setServerPort(peer.getPort());
 
 		log.info("Requesting start stream to " + buffer + "...");
-		String response = buffer.sendAndReceive(startMessage);
+		
+		try {
+			buffer.send(startMessage);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
