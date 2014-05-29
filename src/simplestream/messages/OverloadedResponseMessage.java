@@ -2,15 +2,10 @@ package simplestream.messages;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -53,19 +48,19 @@ public class OverloadedResponseMessage extends ResponseMessage {
 	public void addClients(List<Peer> clients) {
 		this.connectedClients.addAll(clients);
 	}
-	
+
 	public List<Peer> getClients() {
 		return this.connectedClients;
 	}
-	
+
 	public Peer getServer() {
 		return this.connectedServer;
 	}
-	
+
 	public Boolean inRemoteMode() {
 		return this.inRemoteMode;
 	}
-	
+
 	/**
 	 * Add in a single connected client
 	 * */
@@ -94,26 +89,26 @@ public class OverloadedResponseMessage extends ResponseMessage {
 
 		return jsonMessage.toJSONString();
 	}
-	
+
 	public void populateFieldsFromJSON(String jsonMessageString) {
 		JSONParser parser = new JSONParser();
 		JSONObject jsonMessage = null;
-		
+
 		log.debug("Populating fields using: " + jsonMessageString);
-		  
+
 		try {
 			jsonMessage = (JSONObject) parser.parse(jsonMessageString);
 		} catch (ParseException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		
+
 		//Populate server (if it exists)
 		String serverString = (String) jsonMessage.get(Strings.SERVER_JSON);
 		if(serverString != null) {
 			this.addServer(Peer.fromJSON(serverString));
 		}
-		
+
 		//Populate clients
 		JSONArray clients = (JSONArray) jsonMessage.get(Strings.CLIENTS_JSON);
 		Iterator<JSONObject> iterator = clients.iterator();
@@ -122,7 +117,7 @@ public class OverloadedResponseMessage extends ResponseMessage {
 
 			 String hostname = (String) client.get(Strings.IP_JSON);
 			 int port = ((Long)client.get(Strings.PORT_JSON)).intValue();
-			 
+
 			 this.addClient(new Peer(hostname, port));
 		}
 

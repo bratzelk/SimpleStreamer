@@ -67,7 +67,7 @@ public class ConnectionBuffer {
 		String response = reader.readLine();
 		String print = truncate(response, 40);
 		if (print != null) {
-			log.debug(this + " Received response: " + truncate(response, 40));
+//			log.debug(this + " Received response: " + truncate(response, 40));
 		}
 		return response;
 	}
@@ -79,7 +79,7 @@ public class ConnectionBuffer {
 	 * @throws IOException
 	 */
 	public void send(String message) throws IOException {
-		log.debug(this + " Sending data: " + truncate(message, 40));
+//		log.debug(this + " Sending data: " + truncate(message, 40));
 		writer.println(message);
 	}
 
