@@ -65,7 +65,7 @@ public class RemoteWebcam implements Webcam {
 		try {
 			ConnectionBuffer buffer = ConnectionBuffer.bind(peer);
 			String statusMessage = buffer.receive();
-			log.info("Connected to remove host " + buffer);
+			log.info("Connected to remote host " + buffer);
 			// TODO(orlade): Check status, perform any further setup.
 			return buffer;
 		} catch (IOException e) {
