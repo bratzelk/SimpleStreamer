@@ -1,9 +1,15 @@
 package simplestream.messages;
 
+import java.util.Iterator;
+
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import simplestream.common.Settings;
 import simplestream.common.Strings;
+import simplestream.networking.Peer;
 
 public class StartRequestMessage extends RequestMessage {
 
@@ -41,6 +47,33 @@ public class StartRequestMessage extends RequestMessage {
 		jsonMessage.put(Strings.SPORT_JSON, this.serverPort);
 
 		return jsonMessage.toJSONString();
+	}
+	
+	
+	public void populateFieldsFromJSON(String jsonMessageString) {
+		JSONParser parser = new JSONParser();
+		JSONObject jsonMessage = null;
+		
+		log.debug("Populating fields using: " + jsonMessageString);
+		  
+		try {
+			jsonMessage = (JSONObject) parser.parse(jsonMessageString);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		
+		//Populate fields
+		String serverString = (String) jsonMessage.get(Strings.SERVER_JSON);
+		if(serverString != null) {		
+			int sport = ((Long)jsonMessage.get(Strings.SPORT_JSON)).intValue();
+			this.setServerPort(sport);
+			
+			int rateLimit = ((Long)jsonMessage.get(Strings.RATELIMIT_JSON)).intValue();
+			this.setRatelimit(rateLimit);
+		}
+		
+
 	}
 
 }
