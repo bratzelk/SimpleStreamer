@@ -76,6 +76,7 @@ public class ClientHandler implements Runnable {
 					log.info("Received startstream request from " + buffer);
 					streaming = true;
 					buffer.send(MessageFactory.createMessage(Strings.START_RESONSE_MESSAGE));
+					log.info("Sent status response to " + buffer);
 				}
 			} catch (IOException e) {
 				throw new RuntimeException("Error listening for request", e);
@@ -95,6 +96,7 @@ public class ClientHandler implements Runnable {
 		sendThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
+				log.info("Starting data send loop to " + buffer);
 				while (true) {
 					// TODO(orlade): Listen for incoming requests.
 					try {
@@ -132,7 +134,7 @@ public class ClientHandler implements Runnable {
 						String request = buffer.receive();
 						String messageType = MessageFactory.getMessageType(request);
 						if (Strings.STOP_REQUEST_MESSAGE.equals(messageType)) {
-							log.info("Received stop requset from " + buffer.getPeer());
+							log.info("Received stop request from " + buffer.getPeer());
 							acknowledgeStop();
 							return;
 						}
