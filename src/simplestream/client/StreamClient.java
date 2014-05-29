@@ -15,8 +15,6 @@ public class StreamClient {
 	/** Number of ms between rendering each frame. */
 	private static final int DISPLAY_RATE = 100;
 
-	private final int streamingRate;
-
 	/** The {@link Webcam} currently being used to stream images (local or remote). */
 	private Webcam webcam;
 
@@ -29,9 +27,8 @@ public class StreamClient {
 	/**
 	 * Constructs a {@link StreamClient} in the default local mode.
 	 */
-	public StreamClient(Webcam webcam, int streamingRate, Runnable exitCallback) {
+	public StreamClient(Webcam webcam, Runnable exitCallback) {
 		this.webcam = webcam;
-		this.streamingRate = streamingRate;
 		this.viewer = new StreamViewer(exitCallback);
 	}
 
@@ -77,10 +74,6 @@ public class StreamClient {
 
 	public Webcam getCurrentWebcam() {
 		return webcam;
-	}
-
-	public int getStreamingRate() {
-		return streamingRate;
 	}
 
 }
