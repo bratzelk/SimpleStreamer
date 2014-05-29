@@ -136,7 +136,7 @@ public class RemoteWebcam implements Webcam {
 						return;
 					}
 
-					log.info("Got message on " + buffer + ": " + response);
+					log.info("Got message on " + buffer);
 
 					
 					// If the message was an image response message, save it as the current frame.
@@ -155,7 +155,7 @@ public class RemoteWebcam implements Webcam {
 						case Strings.OVERLOADED_RESPONSE_MESSAGE:
 							OverloadedResponseMessage overloadedMessage =
 								(OverloadedResponseMessage) MessageFactory
-									.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);// response;
+									.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
 							overloadedMessage.populateFieldsFromJSON(response);
 							log.debug("Remote peer " + buffer
 								+ " overloaded, performing handover... (" + overloadedMessage + ")");
