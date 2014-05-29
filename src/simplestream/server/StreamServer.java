@@ -54,7 +54,7 @@ public class StreamServer {
 					MessageFactory.createMessage(Strings.STATUS_RESONSE_MESSAGE);
 				buffer.send(statusMessage.toJSON());
 
-				//If we have reached the maximum number of allowed connections
+				// If we have reached the maximum number of allowed connections
 				// then we send an overloaded response message.
 				if (clients.size() < Settings.MAX_CONNECTIONS) {
 					serve(buffer);
@@ -75,20 +75,22 @@ public class StreamServer {
 	 * @throws IOException
 	 */
 	protected void doHandover(ConnectionBuffer buffer) throws IOException {
-		OverloadedResponseMessage overloadedResponse = (OverloadedResponseMessage) MessageFactory.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
-		
-		//TODO
-		//add the server if in remote mode
-		//overloadedResponse.addServer(connctedServer);
-		
-		//add the connected clients
+		OverloadedResponseMessage overloadedResponse =
+			(OverloadedResponseMessage) MessageFactory
+				.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
+
+		// TODO
+		// add the server if in remote mode
+		// overloadedResponse.addServer(connctedServer);
+
+		// add the connected clients
 		for (ClientHandler client : clients) {
-			Peer peer = client.getPeer();
+			Peer servingPeer = new Peer(client.getPeer().getHostname(), client.getSport());
 			// Add client peer to message.
-			overloadedResponse.addClient(peer);
+			overloadedResponse.addClient(servingPeer);
 		}
-		buffer.send((Message)overloadedResponse);
-		
+		buffer.send((Message) overloadedResponse);
+
 		log.debug("Sending an overloaded response message.");
 	}
 
@@ -97,7 +99,8 @@ public class StreamServer {
 	 *
 	 * @param streamingPort The port to stream
 	 */
-	public StreamServer(final LocalWebcam localWebcam, final int streamingRate, final int streamingPort) {
+	public StreamServer(final LocalWebcam localWebcam, final int streamingRate,
+		final int streamingPort) {
 		this.localWebcam = localWebcam;
 		this.streamingRate = streamingRate;
 		try {

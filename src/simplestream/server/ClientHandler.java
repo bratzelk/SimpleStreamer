@@ -34,6 +34,9 @@ public class ClientHandler implements Runnable {
 	/** The rate to display localWebcam images at. */
 	private final int streamingRate;
 
+	/** The port on which the client is serving its own data. */
+	private int sport;
+
 	/** Whether we are streaming images to the client. */
 	private boolean streaming = false;
 
@@ -64,6 +67,9 @@ public class ClientHandler implements Runnable {
 					// TODO(orlade): Parse ratelimit argument of startstream message.
 					// int requestLimit = message.get(Strings.RATELIMIT_JSON);
 					//
+
+					// TODO(orlade): Parse sport out of message.
+					setSport(6262);
 					log.debug("Received startstream request from " + buffer);
 					streaming = true;
 					buffer.send(MessageFactory.createMessage(Strings.START_RESONSE_MESSAGE));
@@ -186,6 +192,24 @@ public class ClientHandler implements Runnable {
 	 */
 	public Peer getPeer() {
 		return buffer.getPeer();
+	}
+
+	/**
+	 * Returns the hostname of the connected client.
+	 */
+	public String getHostname() {
+		return buffer.getPeer().getHostname();
+	}
+
+	/**
+	 * Returns the port on which the client is serving its data.
+	 */
+	public int getSport() {
+		return sport;
+	}
+
+	public void setSport(int sport) {
+		this.sport = sport;
 	}
 
 }

@@ -8,10 +8,16 @@ import org.json.simple.parser.JSONParser;
 
 import simplestream.common.Strings;
 
+/**
+ * Represents a remote machine for the application can interact with.
+ */
 public class Peer {
 
-	String hostname;
-	int port;
+	/** The hostname of the peer machine. */
+	private final String hostname;
+
+	/** The port on which the peer is receiving messages. */
+	private final int port;
 
 	public Peer(String hostname, int port) {
 		this.hostname = hostname;
@@ -22,12 +28,12 @@ public class Peer {
 		InetSocketAddress remoteAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
 		return new Peer(remoteAddress.getHostName(), remoteAddress.getPort());
 	}
-	
+
 	public static Peer fromJSON(String jsonPeer) {
-		
+
 		String hostname = null;
 		int port = 0;
-		
+
 		JSONParser parser = new JSONParser();
 		JSONObject jsonMessage = null;
 		try {
@@ -36,12 +42,12 @@ public class Peer {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		
+
 		if (jsonMessage != null) {
 			hostname = (String) jsonMessage.get(Strings.IP_JSON);
 			port = ((Long)jsonMessage.get(Strings.PORT_JSON)).intValue();
 		}
-		
+
 		if(hostname != null && port != 0) {
 			return new Peer(hostname, port);
 		}
