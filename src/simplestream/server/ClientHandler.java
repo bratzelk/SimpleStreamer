@@ -73,7 +73,7 @@ public class ClientHandler implements Runnable {
 					// Read out the port the client is serving on and the rate to serve at.
 					setSport(message.getServerPort());
 					streamingRate = message.getRatelimit();
-					log.debug("Received startstream request from " + buffer);
+					log.info("Received startstream request from " + buffer);
 					streaming = true;
 					buffer.send(MessageFactory.createMessage(Strings.START_RESONSE_MESSAGE));
 				}
@@ -132,7 +132,7 @@ public class ClientHandler implements Runnable {
 						String request = buffer.receive();
 						String messageType = MessageFactory.getMessageType(request);
 						if (Strings.STOP_REQUEST_MESSAGE.equals(messageType)) {
-							log.debug("Received stop requset from " + buffer.getPeer());
+							log.info("Received stop requset from " + buffer.getPeer());
 							acknowledgeStop();
 							return;
 						}

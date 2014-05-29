@@ -91,7 +91,7 @@ public class StreamServer {
 		}
 		buffer.send((Message) overloadedResponse);
 
-		log.debug("Sending an overloaded response message.");
+		log.info("Sending an overloaded response message.");
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class StreamServer {
 	 * @param buffer The connection to the client.
 	 */
 	protected void serve(ConnectionBuffer buffer) {
-		log.debug("Serving client " + buffer);
+		log.info("Serving client " + buffer);
 		ClientHandler client = new ClientHandler(buffer, localWebcam, streamingRate);
 		client.run();
 		clients.add(client);
