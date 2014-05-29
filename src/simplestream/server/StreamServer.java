@@ -15,9 +15,9 @@ import simplestream.messages.OverloadedResponseMessage;
 import simplestream.messages.StatusResponseMessage;
 import simplestream.networking.ConnectionBuffer;
 import simplestream.networking.ConnectionListener;
-import simplestream.networking.Peer;
 import simplestream.networking.ConnectionListener.Callback;
-import simplestream.webcam.LocalWebcam;
+import simplestream.networking.Peer;
+import simplestream.webcam.Webcam;
 
 /**
  * Wraps and runs a {@link ConnectionListener} on a new thread to catch incoming connections. New
@@ -30,8 +30,8 @@ public class StreamServer {
 	/** Listens for new incoming connections. */
 	private ConnectionListener listener;
 
-	/** A stream from the localWebcam local to this host to be sent to remote clients. */
-	private LocalWebcam localWebcam;
+	/** A stream from the current webcam this host is streaming from (local or remote). */
+	private final Webcam webcam;
 
 	/** The rate to display localWebcam images at. */
 	private final int streamingRate;
@@ -100,9 +100,9 @@ public class StreamServer {
 	 *
 	 * @param streamingPort The port to stream
 	 */
-	public StreamServer(final LocalWebcam localWebcam, final int streamingRate,
+	public StreamServer(final Webcam webcam, final int streamingRate,
 		final int streamingPort) {
-		this.localWebcam = localWebcam;
+		this.webcam = webcam;
 		this.streamingRate = streamingRate;
 		try {
 			listener = new ConnectionListener(streamingPort, clientConnectionCallback);
@@ -119,7 +119,7 @@ public class StreamServer {
 	 */
 	protected void serve(ConnectionBuffer buffer) {
 		log.info("Serving client on " + buffer);
-		ClientHandler client = new ClientHandler(buffer, localWebcam, streamingRate);
+		ClientHandler client = new ClientHandler(buffer, webcam, streamingRate);
 		client.run();
 		clients.add(client);
 	}

@@ -197,6 +197,12 @@ public class RemoteWebcam implements Webcam {
 	@Override
 	public void kill() {
 		log.debug("Shutting down " + this + "...");
+		try {
+			stopStreaming();
+		} catch (IOException e) {
+			log.error("Failed to stop streaming", e);
+		}
+
 		listenThread.interrupt();
 		try {
 			buffer.kill();

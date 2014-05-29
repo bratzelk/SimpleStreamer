@@ -12,6 +12,9 @@ import simplestream.common.Settings;
 import simplestream.common.Strings;
 import simplestream.server.StreamServer;
 import simplestream.webcam.LocalWebcam;
+import simplestream.webcam.RemoteWebcam;
+import simplestream.webcam.Webcam;
+
 
 /**
  * This is the greatest and best app in the world.
@@ -35,6 +38,9 @@ public class SimpleStreamApplication {
 	/** The number of ms between remote images being sent. */
 	@Option(name = "-rate", usage = "Streaming Rate")
 	private int streamingRate = Settings.DEFAULT_STREAMING_RATE;
+
+	/** The current webcam to stream image data from. */
+	private Webcam webcam;
 
 	/** The local server component that streams out to incoming connections. */
 	private StreamServer server;
@@ -75,21 +81,20 @@ public class SimpleStreamApplication {
 		log.debug(Settings.APP_NAME + " " + Settings.APP_VERSION);
 
 		// Create a shared streamer for the local webcam.
-		LocalWebcam localWebcam = new LocalWebcam();
-
-		log.debug("Creating server...");
-		server = new StreamServer(localWebcam, streamingRate, streamingPort);
-
-		log.debug("Creating client...");
-		client = new StreamClient(localWebcam, streamingRate, exitCallback);
-
 		if (isLocal()) {
 			log.debug("Initiating local webcam stream...");
-			client.switchToLocal();
+			webcam = new LocalWebcam();
 		} else {
 			log.debug("Initiating remote webcam stream...");
-			client.switchToRemote(hostname, remotePort);
+			webcam = new RemoteWebcam(streamingRate, hostname, remotePort);
 		}
+
+		log.debug("Creating server...");
+		server = new StreamServer(webcam, streamingRate, streamingPort);
+
+		log.debug("Creating client...");
+		client = new StreamClient(webcam, streamingRate, exitCallback);
+
 		client.runViewer();
 	}
 
