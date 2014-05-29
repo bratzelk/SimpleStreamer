@@ -57,6 +57,7 @@ public class RemoteWebcam implements Webcam {
 		try {
 			ConnectionBuffer buffer = ConnectionBuffer.bind(peer);
 			String statusMessage = buffer.receive();
+			log.info("Connected to remove host " + buffer);
 			// TODO(orlade): Check status, perform any further setup.
 			return buffer;
 		} catch (IOException e) {
@@ -74,8 +75,8 @@ public class RemoteWebcam implements Webcam {
 		startMessage.setRatelimit(streamingRate);
 		startMessage.setServerPort(peer.getPort());
 
+		log.info("Requesting start stream to " + buffer + "...");
 		String response = buffer.sendAndReceive(startMessage);
-
 	}
 
 	/**
@@ -99,8 +100,8 @@ public class RemoteWebcam implements Webcam {
 
 		log.debug("Available Peer found: " + newServer + ". Trying to connect...");
 
-		//TODO I'm pretty sure this isn't nice...
-		//Start the whole process again
+		// TODO I'm pretty sure this isn't nice...
+		// Start the whole process again
 		this.peer = newServer;
 		buffer = connect();
 		listen();
@@ -124,7 +125,7 @@ public class RemoteWebcam implements Webcam {
 		listenThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				log.debug("Listening for remote image data...");
+				log.debug("Listening for remote image data on " + buffer + "...");
 				while (true) {
 					// Wait for a message from the remote peer.
 					String response;
@@ -149,11 +150,14 @@ public class RemoteWebcam implements Webcam {
 							kill();
 							return;
 						case Strings.OVERLOADED_RESPONSE_MESSAGE:
-							OverloadedResponseMessage overloadedMessage = (OverloadedResponseMessage) MessageFactory.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);//response;
+							OverloadedResponseMessage overloadedMessage =
+								(OverloadedResponseMessage) MessageFactory
+									.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);// response;
 							overloadedMessage.populateFieldsFromJSON(response);
-							log.debug("Response was: " + overloadedMessage);
+							log.debug("Remote peer " + buffer
+								+ " overloaded, performing handover... (" + overloadedMessage + ")");
 							Collection<Peer> alternativeHosts = overloadedMessage.getClients();
-							if(overloadedMessage.inRemoteMode()) {
+							if (overloadedMessage.inRemoteMode()) {
 								alternativeHosts.add(overloadedMessage.getServer());
 							}
 							followHandover(alternativeHosts);
