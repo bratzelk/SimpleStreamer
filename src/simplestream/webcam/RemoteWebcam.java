@@ -125,7 +125,7 @@ public class RemoteWebcam implements Webcam {
 		listenThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				log.debug("Listening for remote image data on " + buffer + "...");
+				log.info("Listening for remote image data on " + buffer + "...");
 				while (true) {
 					// Wait for a message from the remote peer.
 					String response;
@@ -136,6 +136,9 @@ public class RemoteWebcam implements Webcam {
 						return;
 					}
 
+					log.info("Got message on " + buffer + ": " + response);
+
+					
 					// If the message was an image response message, save it as the current frame.
 					String messageType = MessageFactory.getMessageType(response);
 					if (messageType == null) {
