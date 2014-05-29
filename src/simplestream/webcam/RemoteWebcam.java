@@ -81,7 +81,7 @@ public class RemoteWebcam implements Webcam {
 			(StartRequestMessage) MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
 
 		startMessage.setRatelimit(streamingRate);
-		startMessage.setServerPort(peer.getPort());
+		startMessage.setServerPort(streamingPort);
 
 		log.info("Requesting start stream (rate: " + streamingRate + ") to " + buffer + "...");
 
