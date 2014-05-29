@@ -9,6 +9,7 @@ import simplestream.common.Strings;
 import simplestream.messages.ImageResponseMessage;
 import simplestream.messages.Message;
 import simplestream.messages.MessageFactory;
+import simplestream.messages.StartRequestMessage;
 import simplestream.networking.Compressor;
 import simplestream.networking.ConnectionBuffer;
 import simplestream.networking.Peer;
@@ -32,7 +33,7 @@ public class ClientHandler implements Runnable {
 	private final LocalWebcam localWebcam;
 
 	/** The rate to display localWebcam images at. */
-	private final int streamingRate;
+	private int streamingRate;
 
 	/** The port on which the client is serving its own data. */
 	private int sport;
@@ -64,12 +65,14 @@ public class ClientHandler implements Runnable {
 				log.debug("Listening for startstream request...");
 				String request = buffer.receive();
 				if (MessageFactory.getMessageType(request).equals(Strings.START_REQUEST_MESSAGE)) {
-					// TODO(orlade): Parse ratelimit argument of startstream message.
-					// int requestLimit = message.get(Strings.RATELIMIT_JSON);
-					//
+					StartRequestMessage message =
+						(StartRequestMessage) MessageFactory
+							.createMessage(Strings.START_REQUEST_MESSAGE);
+					message.populateFieldsFromJSON(request);
 
-					// TODO(orlade): Parse sport out of message.
-					setSport(6262);
+					// Read out the port the client is serving on and the rate to serve at.
+					setSport(message.getServerPort());
+					streamingRate = message.getRatelimit();
 					log.debug("Received startstream request from " + buffer);
 					streaming = true;
 					buffer.send(MessageFactory.createMessage(Strings.START_RESONSE_MESSAGE));

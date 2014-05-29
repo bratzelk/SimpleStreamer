@@ -31,6 +31,14 @@ public class StartRequestMessage extends RequestMessage {
 		this.serverPort = serverPort;
 	}
 
+	public int getRatelimit() {
+		return ratelimit;
+	}
+
+	public int getServerPort() {
+		return serverPort;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public String toJSON() {
@@ -44,31 +52,31 @@ public class StartRequestMessage extends RequestMessage {
 
 		return jsonMessage.toJSONString();
 	}
-	
-	
+
+
 	public void populateFieldsFromJSON(String jsonMessageString) {
 		JSONParser parser = new JSONParser();
 		JSONObject jsonMessage = null;
-		
+
 		log.debug("Populating fields using: " + jsonMessageString);
-		  
+
 		try {
 			jsonMessage = (JSONObject) parser.parse(jsonMessageString);
 		} catch (ParseException e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		
+
 		//Populate fields
 		String serverString = (String) jsonMessage.get(Strings.SERVER_JSON);
-		if(serverString != null) {		
+		if(serverString != null) {
 			int sport = ((Long)jsonMessage.get(Strings.SPORT_JSON)).intValue();
 			this.setServerPort(sport);
-			
+
 			int rateLimit = ((Long)jsonMessage.get(Strings.RATELIMIT_JSON)).intValue();
 			this.setRatelimit(rateLimit);
 		}
-		
+
 
 	}
 
