@@ -17,6 +17,7 @@ import simplestream.networking.ConnectionBuffer;
 import simplestream.networking.ConnectionListener;
 import simplestream.networking.ConnectionListener.Callback;
 import simplestream.networking.Peer;
+import simplestream.webcam.RemoteWebcam;
 import simplestream.webcam.Webcam;
 
 /**
@@ -35,6 +36,8 @@ public class StreamServer {
 
 	/** The rate to display localWebcam images at. */
 	private final int streamingRate;
+	
+	private Boolean isRemote;
 
 	/** The collection of clients that have connected and are being serviced. */
 	private Collection<ClientHandler> clients = new ArrayList<ClientHandler>();
@@ -81,8 +84,9 @@ public class StreamServer {
 				.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
 
 		// TODO
-		// add the server if in remote mode
-		// overloadedResponse.addServer(connctedServer);
+		if(isRemote) {
+			overloadedResponse.addServer(((RemoteWebcam)webcam).getPeer());
+		}
 
 		// add the connected clients
 		for (ClientHandler client : clients) {
@@ -97,12 +101,13 @@ public class StreamServer {
 
 	/**
 	 * Wraps a connection listener on a new thread that
-	 *
 	 * @param streamingPort The port to stream
+	 * @param isRemote TODO
 	 */
-	public StreamServer(final Webcam webcam, final int streamingRate, final int streamingPort) {
+	public StreamServer(final Webcam webcam, final int streamingRate, final int streamingPort, Boolean isRemote) {
 		this.webcam = webcam;
 		this.streamingRate = streamingRate;
+		this.isRemote = isRemote;
 		try {
 			listener = new ConnectionListener(streamingPort, clientConnectionCallback);
 			listener.start();
