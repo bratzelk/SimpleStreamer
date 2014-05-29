@@ -164,6 +164,7 @@ public class RemoteWebcam implements Webcam {
 								alternativeHosts.add(overloadedMessage.getServer());
 							}
 							followHandover(alternativeHosts);
+							listenThread.interrupt();
 							break;
 					}
 				}
