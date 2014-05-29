@@ -21,9 +21,9 @@ public class Settings {
 	/**
 	 * General Settings
 	 */
-	public static final Boolean SHOW_GUI = true;
+	public static final Boolean DISPLAY_LOCAL_WEBCAM = true;
 
-	public static final int MAX_CONNECTIONS = 2;
+	public static final int MAX_CONNECTIONS = 3;
 
 
 	/**
