@@ -100,8 +100,7 @@ public class StreamServer {
 	 *
 	 * @param streamingPort The port to stream
 	 */
-	public StreamServer(final Webcam webcam, final int streamingRate,
-		final int streamingPort) {
+	public StreamServer(final Webcam webcam, final int streamingRate, final int streamingPort) {
 		this.webcam = webcam;
 		this.streamingRate = streamingRate;
 		try {
@@ -119,7 +118,15 @@ public class StreamServer {
 	 */
 	protected void serve(ConnectionBuffer buffer) {
 		log.info("Serving client on " + buffer);
-		ClientHandler client = new ClientHandler(buffer, webcam, streamingRate);
+		final ClientHandler client = new ClientHandler(buffer, webcam, streamingRate);
+
+		client.setShutdownCallback(new Runnable() {
+			@Override
+			public void run() {
+				clients.remove(client);
+			}
+		});
+
 		client.run();
 		clients.add(client);
 	}
