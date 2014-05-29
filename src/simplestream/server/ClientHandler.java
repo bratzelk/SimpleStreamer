@@ -47,6 +47,9 @@ public class ClientHandler implements Runnable {
 	/** The thread sending image data. */
 	private Thread sendThread;
 
+	/** The callback to run when the client is shut down. */
+	private Runnable shutdownCallback;
+
 	public ClientHandler(ConnectionBuffer buffer, Webcam webcam, int streamingRate) {
 		this.buffer = buffer;
 		this.webcam = webcam;
@@ -178,6 +181,9 @@ public class ClientHandler implements Runnable {
 	 */
 	public void kill() {
 		log.debug("Shutting down ClientHandler for " + getPeer() + "...");
+		if (shutdownCallback != null) {
+			shutdownCallback.run();
+		}
 		if (stopThread != null) {
 			stopThread.interrupt();
 		}
@@ -217,4 +223,7 @@ public class ClientHandler implements Runnable {
 		this.sport = sport;
 	}
 
+	public void setShutdownCallback(Runnable callback) {
+		this.shutdownCallback = callback;
+	}
 }
