@@ -141,7 +141,7 @@ public class RemoteWebcam implements Webcam {
 						return;
 					}
 
-					log.info("Got message on " + buffer);
+					log.debug("Got message on " + buffer);
 
 
 					// If the message was an image response message, save it as the current frame.
