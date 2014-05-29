@@ -68,14 +68,12 @@ public class StartRequestMessage extends RequestMessage {
 		}
 
 		//Populate fields
-		String serverString = (String) jsonMessage.get(Strings.SERVER_JSON);
-		if(serverString != null) {
-			int sport = ((Long)jsonMessage.get(Strings.SPORT_JSON)).intValue();
-			this.setServerPort(sport);
+		int sport = ((Long)jsonMessage.get(Strings.SPORT_JSON)).intValue();
+		this.setServerPort(sport);
 
-			int rateLimit = ((Long)jsonMessage.get(Strings.RATELIMIT_JSON)).intValue();
-			this.setRatelimit(rateLimit);
-		}
+		int rateLimit = ((Long)jsonMessage.get(Strings.RATELIMIT_JSON)).intValue();
+		this.setRatelimit(rateLimit);
+
 
 
 	}
