@@ -93,7 +93,7 @@ public class SimpleStreamApplication {
 		server = new StreamServer(webcam, streamingRate, streamingPort, isRemote());
 
 		log.debug("Creating client...");
-		client = new StreamClient(webcam, streamingRate, exitCallback);
+		client = new StreamClient(webcam, exitCallback);
 
 		client.runViewer();
 	}
@@ -133,7 +133,7 @@ public class SimpleStreamApplication {
 	private boolean isLocal() {
 		return this.hostname.equals(Strings.EMPTY_REMOTE_HOSTNAME);
 	}
-	
+
 	private boolean isRemote() {
 		return !this.isLocal();
 	}

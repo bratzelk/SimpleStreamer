@@ -71,17 +71,16 @@ public class RemoteWebcam implements Webcam {
 	protected void startStreaming() {
 		StartRequestMessage startMessage =
 			(StartRequestMessage) MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
-		// TODO : Verify that these are correct (Is that the right port to use here?).
+
 		startMessage.setRatelimit(streamingRate);
 		startMessage.setServerPort(peer.getPort());
 
 		log.info("Requesting start stream to " + buffer + "...");
-		
+
 		try {
 			buffer.send(startMessage);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Failed to send start message to " + buffer, e);
 		}
 	}
 
@@ -144,7 +143,7 @@ public class RemoteWebcam implements Webcam {
 
 					log.info("Got message on " + buffer);
 
-					
+
 					// If the message was an image response message, save it as the current frame.
 					String messageType = MessageFactory.getMessageType(response);
 					if (messageType == null) {
@@ -219,11 +218,11 @@ public class RemoteWebcam implements Webcam {
 		log.debug(this + " shut down successful");
 	}
 
-	public synchronized byte[] getCurrentFrame() {
+	public byte[] getCurrentFrame() {
 		return currentFrame;
 	}
 
-	public synchronized void setCurrentFrame(byte[] currentFrame) {
+	public void setCurrentFrame(byte[] currentFrame) {
 		this.currentFrame = currentFrame;
 	}
 

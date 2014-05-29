@@ -12,6 +12,9 @@ public class StreamClient {
 
 	private final Logger log = Logger.getLogger(getClass());
 
+	/** Number of ms between rendering each frame. */
+	private static final int DISPLAY_RATE = 100;
+
 	private final int streamingRate;
 
 	/** The {@link Webcam} currently being used to stream images (local or remote). */
@@ -48,7 +51,7 @@ public class StreamClient {
 
 					// Wait until it's time to display the next frame.
 					try {
-						Thread.sleep(getStreamingRate());
+						Thread.sleep(DISPLAY_RATE);
 					} catch (InterruptedException e) {
 						log.error("Client was interrupted", e);
 						return;

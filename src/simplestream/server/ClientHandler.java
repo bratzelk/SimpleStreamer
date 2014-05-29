@@ -75,8 +75,9 @@ public class ClientHandler implements Runnable {
 
 					// Read out the port the client is serving on and the rate to serve at.
 					setSport(message.getServerPort());
-					streamingRate = message.getRatelimit();
-					log.info("Received startstream request from " + buffer);
+					streamingRate = Math.max(message.getRatelimit(), 100);
+					log.info("Received startstream request (sport: " + getSport() + ", rate: "
+						+ streamingRate + ") from " + buffer);
 					streaming = true;
 					buffer.send(MessageFactory.createMessage(Strings.START_RESONSE_MESSAGE));
 					log.info("Sent status response to " + buffer);
