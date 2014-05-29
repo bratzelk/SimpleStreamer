@@ -50,6 +50,7 @@ public class StreamServer {
 		public void onRequest(final Socket clientSocket) {
 			try {
 				ConnectionBuffer buffer = new ConnectionBuffer(clientSocket);
+				log.info("Received connection, connected on " + buffer);
 				Message statusMessage =
 					MessageFactory.createMessage(Strings.STATUS_RESONSE_MESSAGE);
 				buffer.send(statusMessage.toJSON());
@@ -117,7 +118,7 @@ public class StreamServer {
 	 * @param buffer The connection to the client.
 	 */
 	protected void serve(ConnectionBuffer buffer) {
-		log.info("Serving client " + buffer);
+		log.info("Serving client on " + buffer);
 		ClientHandler client = new ClientHandler(buffer, localWebcam, streamingRate);
 		client.run();
 		clients.add(client);
