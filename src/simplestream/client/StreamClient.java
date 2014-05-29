@@ -76,14 +76,6 @@ public class StreamClient {
 		return webcam;
 	}
 
-	/**
-	 * Changes the source of the webcam images to display.
-	 */
-	public void setCurrentWebcam(Webcam newWebcam) {
-		log.debug("Switching webcam to " + newWebcam);
-		this.webcam = newWebcam;
-	}
-
 	public int getStreamingRate() {
 		return streamingRate;
 	}
