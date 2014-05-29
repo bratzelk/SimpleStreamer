@@ -86,7 +86,7 @@ public class SimpleStreamApplication {
 			webcam = new LocalWebcam();
 		} else {
 			log.debug("Initiating remote webcam stream...");
-			webcam = new RemoteWebcam(streamingRate, hostname, remotePort);
+			webcam = new RemoteWebcam(streamingRate, streamingPort, hostname, remotePort);
 		}
 
 		log.debug("Creating server...");

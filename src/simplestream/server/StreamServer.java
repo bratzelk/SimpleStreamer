@@ -36,7 +36,7 @@ public class StreamServer {
 
 	/** The rate to display localWebcam images at. */
 	private final int streamingRate;
-	
+
 	private Boolean isRemote;
 
 	/** The collection of clients that have connected and are being serviced. */
@@ -84,8 +84,8 @@ public class StreamServer {
 				.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
 
 		// TODO
-		if(isRemote) {
-			overloadedResponse.addServer(((RemoteWebcam)webcam).getPeer());
+		if (isRemote) {
+			overloadedResponse.addServer(((RemoteWebcam) webcam).getPeer());
 		}
 
 		// add the connected clients
@@ -101,10 +101,12 @@ public class StreamServer {
 
 	/**
 	 * Wraps a connection listener on a new thread that
+	 *
 	 * @param streamingPort The port to stream
 	 * @param isRemote TODO
 	 */
-	public StreamServer(final Webcam webcam, final int streamingRate, final int streamingPort, Boolean isRemote) {
+	public StreamServer(final Webcam webcam, final int streamingRate, final int streamingPort,
+		Boolean isRemote) {
 		this.webcam = webcam;
 		this.streamingRate = streamingRate;
 		this.isRemote = isRemote;

@@ -26,9 +26,15 @@ public class RemoteWebcam implements Webcam {
 	/** The latest image frame to have been received. */
 	private byte[] currentFrame;
 
-	private int streamingRate;
+	/** The rate at which to request image data be sent. */
+	private final int streamingRate;
 
-	/** The details of the remote host streaming the images. */
+	/** The port that this instance is streaming on. */
+	private final int streamingPort;
+
+	/**
+	 * The details of the remote host streaming the images.
+	 */
 	private Peer peer;
 
 	/** The connection to the remote host for sending and receiving simplestream.messages. */
@@ -39,8 +45,10 @@ public class RemoteWebcam implements Webcam {
 
 	private BFSPeerIterator peerIterator;
 
-	public RemoteWebcam(int streamingRate, String remoteHostname, int remotePort) {
+
+	public RemoteWebcam(int streamingRate, int streamingPort, String remoteHostname, int remotePort) {
 		this.streamingRate = streamingRate;
+		this.streamingPort = streamingPort;
 		this.peer = new Peer(remoteHostname, remotePort);
 
 		this.peerIterator = new BFSPeerIterator();
