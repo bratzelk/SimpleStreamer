@@ -1,15 +1,11 @@
 package simplestream.messages;
 
-import java.util.Iterator;
-
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import simplestream.common.Settings;
 import simplestream.common.Strings;
-import simplestream.networking.Peer;
 
 public class StartRequestMessage extends RequestMessage {
 
