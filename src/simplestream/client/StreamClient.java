@@ -1,11 +1,7 @@
 package simplestream.client;
 
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
 
-import simplestream.webcam.LocalWebcam;
-import simplestream.webcam.RemoteWebcam;
 import simplestream.webcam.Webcam;
 
 
@@ -18,14 +14,8 @@ public class StreamClient {
 
 	private final int streamingRate;
 
-	/** The {@link Webcam} on the local machine. */
-	private final LocalWebcam localWebcam;
-
-	/** The current {@link Webcam} connected on a remote host. */
-	private RemoteWebcam remoteWebcam;
-
 	/** The {@link Webcam} currently being used to stream images (local or remote). */
-	private Webcam currentWebcam;
+	private Webcam webcam;
 
 	/** The viewer in which to render the local webcam images. */
 	private final StreamViewer viewer;
@@ -36,33 +26,10 @@ public class StreamClient {
 	/**
 	 * Constructs a {@link StreamClient} in the default local mode.
 	 */
-	public StreamClient(LocalWebcam localWebcam, int streamingRate, Runnable exitCallback) {
-		this.localWebcam = localWebcam;
+	public StreamClient(Webcam webcam, int streamingRate, Runnable exitCallback) {
+		this.webcam = webcam;
 		this.streamingRate = streamingRate;
 		this.viewer = new StreamViewer(exitCallback);
-	}
-
-	/**
-	 * Begins receiving webcam data from the local webcam, if not doing so already.
-	 */
-	public void switchToLocal() {
-		log.debug("Switching to local Webcam...");
-		setCurrentWebcam(localWebcam);
-	}
-
-	/**
-	 * Begins receiving webcam data from a remote host.
-	 *
-	 * @param hostname The hostname of the remote host.
-	 * @param remotePort The connected port on the remote host.
-	 */
-	public void switchToRemote(String hostname, int remotePort) {
-		log.debug("Switching to remote Webcam...");
-		// If the remote host is already connected, do nothing.
-		if (remoteWebcam != null && remoteWebcam.getPeer().equals(hostname, remotePort)) return;
-
-		remoteWebcam = new RemoteWebcam(streamingRate, hostname, remotePort);
-		setCurrentWebcam(remoteWebcam);
 	}
 
 	/**
@@ -97,17 +64,8 @@ public class StreamClient {
 	 */
 	public void kill() {
 		log.debug("Shutting down StreamClient...");
-		if (localWebcam != null) {
-			localWebcam.kill();
-		}
-		if (remoteWebcam != null) {
-			// Don't call kill(); stopStreaming will kill the webcam once it is disconnected.
-			try {
-				remoteWebcam.stopStreaming();
-			} catch (IOException e) {
-				log.error("Failed to stop streaming cleanly, killing...", e);
-				remoteWebcam.kill();
-			}
+		if (webcam != null) {
+			webcam.kill();
 		}
 		viewerThread.interrupt();
 		viewer.close();
@@ -115,7 +73,7 @@ public class StreamClient {
 	}
 
 	public Webcam getCurrentWebcam() {
-		return currentWebcam;
+		return webcam;
 	}
 
 	/**
@@ -123,7 +81,7 @@ public class StreamClient {
 	 */
 	public void setCurrentWebcam(Webcam newWebcam) {
 		log.debug("Switching webcam to " + newWebcam);
-		this.currentWebcam = newWebcam;
+		this.webcam = newWebcam;
 	}
 
 	public int getStreamingRate() {

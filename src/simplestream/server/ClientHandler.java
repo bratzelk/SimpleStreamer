@@ -13,7 +13,7 @@ import simplestream.messages.StartRequestMessage;
 import simplestream.networking.Compressor;
 import simplestream.networking.ConnectionBuffer;
 import simplestream.networking.Peer;
-import simplestream.webcam.LocalWebcam;
+import simplestream.webcam.Webcam;
 
 /**
  * Services a single {@link StreamClient} by responding to requests and streaming localWebcam data
@@ -30,7 +30,7 @@ public class ClientHandler implements Runnable {
 	private final ConnectionBuffer buffer;
 
 	/** The local localWebcam to send images from. */
-	private final LocalWebcam localWebcam;
+	private final Webcam webcam;
 
 	/** The rate to display localWebcam images at. */
 	private int streamingRate;
@@ -47,9 +47,9 @@ public class ClientHandler implements Runnable {
 	/** The thread sending image data. */
 	private Thread sendThread;
 
-	public ClientHandler(ConnectionBuffer buffer, LocalWebcam localWebcam, int streamingRate) {
+	public ClientHandler(ConnectionBuffer buffer, Webcam webcam, int streamingRate) {
 		this.buffer = buffer;
-		this.localWebcam = localWebcam;
+		this.webcam = webcam;
 		this.streamingRate = streamingRate;
 	}
 
@@ -100,7 +100,7 @@ public class ClientHandler implements Runnable {
 				while (true) {
 					// TODO(orlade): Listen for incoming requests.
 					try {
-						log.debug("Sending image data...");
+						log.info("Sending image data on " + buffer + "...");
 						buffer.send(buildImageMessage());
 					} catch (IOException e) {
 						log.error("Error retrieving localWebcam image for " + buffer);
@@ -158,7 +158,7 @@ public class ClientHandler implements Runnable {
 			(ImageResponseMessage) MessageFactory.createMessage(Strings.IMAGE_RESPONSE_MESSAGE);
 
 		// get the localWebcam image data and compress it
-		byte[] imageData = localWebcam.getImage();
+		byte[] imageData = webcam.getImage();
 		log.debug("Compressing data: " + imageData);
 		byte[] compressedImageData = Compressor.compress(imageData);
 		message.setImageData(compressedImageData);
