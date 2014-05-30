@@ -5,6 +5,7 @@ import java.net.Socket;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import simplestream.common.Strings;
 
@@ -24,13 +25,27 @@ public class Peer {
 		this.port = port;
 	}
 
+	/**
+	 * Creates a {@link Peer} from data extracted from the given {@link Socket}.
+	 *
+	 * @param socket
+	 *            The socket of the connection to the peer.
+	 * @return The {@link Peer} containing data from the socket.
+	 */
 	public static Peer fromSocket(Socket socket) {
-		InetSocketAddress remoteAddress = (InetSocketAddress) socket.getRemoteSocketAddress();
+		InetSocketAddress remoteAddress = (InetSocketAddress) socket
+				.getRemoteSocketAddress();
 		return new Peer(remoteAddress.getHostName(), remoteAddress.getPort());
 	}
 
+	/**
+	 * Deserializes the {@link Peer} data from the given JSON string.
+	 *
+	 * @param jsonPeer
+	 *            A serialized {@link Peer}.
+	 * @return A deserialized {@link Peer}.
+	 */
 	public static Peer fromJSON(String jsonPeer) {
-
 		String hostname = null;
 		int port = 0;
 
@@ -38,23 +53,22 @@ public class Peer {
 		JSONObject jsonMessage = null;
 		try {
 			jsonMessage = (JSONObject) parser.parse(jsonPeer);
-		} catch (org.json.simple.parser.ParseException e) {
-			e.printStackTrace();
-			System.exit(-1);
+		} catch (ParseException e) {
+			throw new IllegalStateException("Unable to deserialize peer JSON: "
+					+ jsonPeer);
 		}
 
 		if (jsonMessage != null) {
 			hostname = (String) jsonMessage.get(Strings.IP_JSON);
-			port = ((Long)jsonMessage.get(Strings.PORT_JSON)).intValue();
+			port = ((Long) jsonMessage.get(Strings.PORT_JSON)).intValue();
 		}
 
-		if(hostname != null && port != 0) {
+		if (hostname != null && port != 0) {
 			return new Peer(hostname, port);
+		} else {
+			throw new IllegalArgumentException(
+					"Invalid JSON Supplied for new Peer");
 		}
-		else {
-			throw new IllegalArgumentException("Invalid JSON Supplied for new Peer");
-		}
-
 	}
 
 	public String getHostname() {

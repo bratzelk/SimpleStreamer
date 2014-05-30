@@ -8,14 +8,17 @@ import com.github.sarxos.webcam.ds.buildin.natives.DeviceList;
 import com.github.sarxos.webcam.ds.buildin.natives.OpenIMAJGrabber;
 
 /**
- * Accesses the local machine webcam to grab images from.
+ * Accesses the local machine's webcam to grab images from.
  */
 public class LocalWebcam implements Webcam {
 
 	private final Logger log = Logger.getLogger(getClass());
 
-	private final OpenIMAJGrabber grabber;
+	/** The local machine's webcam. */
 	private Device device;
+
+	/** Retrieves image frames from the local machine's webcam. */
+	private final OpenIMAJGrabber grabber;
 
 	public LocalWebcam() {
 		grabber = new OpenIMAJGrabber();
@@ -31,7 +34,8 @@ public class LocalWebcam implements Webcam {
 			throw new IllegalStateException("No local webcam device found");
 		}
 
-		boolean started = grabber.startSession(320, 240, 30, Pointer.pointerTo(device));
+		boolean started = grabber.startSession(320, 240, 30,
+				Pointer.pointerTo(device));
 
 		if (!started) {
 			throw new RuntimeException("Not able to start native grabber!");
@@ -39,7 +43,8 @@ public class LocalWebcam implements Webcam {
 	}
 
 	/**
-	 * Grabs the next image frame from the local webcam and return it as a byte array.
+	 * Grabs the next image frame from the local webcam and return it as a byte
+	 * array.
 	 */
 	public byte[] getImage() {
 		grabber.nextFrame();

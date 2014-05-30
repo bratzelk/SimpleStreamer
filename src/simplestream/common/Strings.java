@@ -1,23 +1,13 @@
 package simplestream.common;
 
+/**
+ * A collection of common strings used throughout the application.
+ */
 public class Strings {
-
-	/**
-	 * Common Strings
-	 * 
-	 * These are strings used throughout the application.
-	 * 
-	 */
 
 	public static final String EMPTY_REMOTE_HOSTNAME = "NO_REMOTE_HOST";
 
-	/**
-	 * Protocol Strings
-	 * 
-	 * These are strings used throughout the JSON Message Protocol.
-	 * 
-	 */
-
+	// JSON Message Protocol.
 	public static final String LOCAL_STREAMING_TYPE_JSON = "local";
 	public static final String REMOTE_STREAMING_TYPE_JSON = "remote";
 
@@ -35,14 +25,7 @@ public class Strings {
 	public static final String YES_JSON = "yes";
 	public static final String NO_JSON = "no";
 
-
-
-	/**
-	 * Message Types Strings
-	 * 
-	 * These are strings used for simplestream.messages According to the specification they are always lowercase
-	 * 
-	 */
+	// Message type strings, lowercase as per spec.
 	public static final String REQUEST_MESSAGE = "request";
 	public static final String RESPONSE_MESSAGE = "response";
 
@@ -53,4 +36,5 @@ public class Strings {
 	public static final String STOP_REQUEST_MESSAGE = "stopstream";
 	public static final String STOPPED_RESPONSE_MESSAGE = "stoppedstream";
 	public static final String OVERLOADED_RESPONSE_MESSAGE = "overloaded";
+
 }

@@ -1,6 +1,7 @@
 package simplestream.messages;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,13 +13,21 @@ import org.json.simple.parser.ParseException;
 import simplestream.common.Strings;
 import simplestream.networking.Peer;
 
+/**
+ * Indicates that the server has the maximum number of client connections
+ * already. Provides a list of those clients so that a prospective client can
+ * try connecting to them instead.
+ */
 public class OverloadedResponseMessage extends ResponseMessage {
 
-	private List<Peer> connectedClients;
+	/** The clients currently connected to the server. */
+	private Collection<Peer> connectedClients;
 
+	/** Whether the server is streaming from a remote host. */
 	private Boolean inRemoteMode;
-	private Peer connectedServer;
 
+	/** The host that the server is connected to. */
+	private Peer connectedServer;
 
 	public OverloadedResponseMessage() {
 		super();
@@ -49,7 +58,7 @@ public class OverloadedResponseMessage extends ResponseMessage {
 		this.connectedClients.addAll(clients);
 	}
 
-	public List<Peer> getClients() {
+	public Collection<Peer> getClients() {
 		return this.connectedClients;
 	}
 
@@ -68,6 +77,9 @@ public class OverloadedResponseMessage extends ResponseMessage {
 		this.connectedClients.add(client);
 	}
 
+	/**
+	 * Serializes the message to a JSON string.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public String toJSON() {
@@ -90,37 +102,35 @@ public class OverloadedResponseMessage extends ResponseMessage {
 		return jsonMessage.toJSONString();
 	}
 
+	/**
+	 * Popualtes the {@link Message} contents by deserializing the given JSON
+	 * string.
+	 *
+	 * @param jsonMessageString
+	 *            The serialized JSON content of the {@link Message}.
+	 */
 	public void populateFieldsFromJSON(String jsonMessageString) {
-		JSONParser parser = new JSONParser();
-		JSONObject jsonMessage = null;
+		JSONObject jsonMessage = deserialize(jsonMessageString);
 
-		log.debug("Populating fields using: " + jsonMessageString);
-
-		try {
-			jsonMessage = (JSONObject) parser.parse(jsonMessageString);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-
-		//Populate server (if it exists)
+		// Populate server (if it exists)
 		String serverString = (String) jsonMessage.get(Strings.SERVER_JSON);
-		if(serverString != null) {
+		if (serverString != null) {
 			this.addServer(Peer.fromJSON(serverString));
 		}
 
-		//Populate clients
+		// Populate clients
 		JSONArray clients = (JSONArray) jsonMessage.get(Strings.CLIENTS_JSON);
-		Iterator<JSONObject> iterator = clients.iterator();
+		@SuppressWarnings("unchecked")
+		Iterator<JSONObject> iterator = (Iterator<JSONObject>) clients
+				.iterator();
 		while (iterator.hasNext()) {
-			 JSONObject client = (JSONObject) iterator.next();
+			JSONObject client = (JSONObject) iterator.next();
 
-			 String hostname = (String) client.get(Strings.IP_JSON);
-			 int port = ((Long)client.get(Strings.PORT_JSON)).intValue();
+			String hostname = (String) client.get(Strings.IP_JSON);
+			int port = ((Long) client.get(Strings.PORT_JSON)).intValue();
 
-			 this.addClient(new Peer(hostname, port));
+			this.addClient(new Peer(hostname, port));
 		}
-
 	}
 
 }

@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import simplestream.common.Strings;
 import simplestream.messages.ImageResponseMessage;
+import simplestream.messages.Message;
 import simplestream.messages.MessageFactory;
 import simplestream.messages.OverloadedResponseMessage;
 import simplestream.messages.StartRequestMessage;
@@ -18,7 +19,8 @@ import simplestream.server.BFSPeerIterator;
 import simplestream.server.NoUnseenPeersException;
 
 /**
- * Treats a remote host like a webcam and returns the images received over the network on demand.
+ * Treats a remote host like a webcam and returns the images received over the
+ * network on demand.
  */
 public class RemoteWebcam implements Webcam {
 
@@ -33,44 +35,61 @@ public class RemoteWebcam implements Webcam {
 	/** The port that this instance is streaming on. */
 	private final int streamingPort;
 
-	/**
-	 * The details of the remote host streaming the images.
-	 */
+	/** The details of the remote host streaming the images. */
 	private Peer peer;
 
-	/** The connection to the remote host for sending and receiving simplestream.messages. */
+	/**
+	 * The connection to the remote host for sending and receiving
+	 * {@link Message}s.
+	 */
 	private ConnectionBuffer buffer;
 
-	/** The thread that is listening for new image data simplestream.messages. */
+	/** The thread that is listening for new image data {@link Message}s. */
 	private Thread listenThread;
 
 	private BFSPeerIterator peerIterator;
 
-
-	public RemoteWebcam(int streamingRate, int streamingPort, String remoteHostname, int remotePort) {
+	/**
+	 * Creates a new {@link RemoteWebcam} and connects it to the given remote
+	 * host.
+	 */
+	public RemoteWebcam(int streamingRate, int streamingPort,
+			String remoteHostname, int remotePort) {
 		this.streamingRate = streamingRate;
 		this.streamingPort = streamingPort;
 		this.peer = new Peer(remoteHostname, remotePort);
 
 		this.peerIterator = new BFSPeerIterator();
 
+		init();
+	}
+
+	/**
+	 * Connects to the saved remote host and starts listening for image data.
+	 */
+	protected void init() {
 		buffer = connect();
 		listen();
 	}
 
 	/**
 	 * Establish a connection with the peer.
+	 *
+	 * @return A {@link ConnectionBuffer} to the connected {@link Peer}.
 	 */
 	protected ConnectionBuffer connect() {
-		// This needs to be added to the overloadedMessage.
 		try {
 			ConnectionBuffer buffer = ConnectionBuffer.bind(peer);
+
+			@SuppressWarnings("unused")
 			String statusMessage = buffer.receive();
+			// TODO: Check contents of status message, not currently used.
+
 			log.info("Connected to remote host " + buffer);
-			// TODO(orlade): Check status, perform any further setup.
 			return buffer;
 		} catch (IOException e) {
-			throw new IllegalStateException("Unable to connect to remote peer: " + peer);
+			throw new IllegalStateException(
+					"Unable to connect to remote peer: " + peer);
 		}
 	}
 
@@ -78,13 +97,14 @@ public class RemoteWebcam implements Webcam {
 	 * Sends a request to the remote peer to start streaming image data.
 	 */
 	protected void startStreaming() {
-		StartRequestMessage startMessage =
-			(StartRequestMessage) MessageFactory.createMessage(Strings.START_REQUEST_MESSAGE);
+		StartRequestMessage startMessage = (StartRequestMessage) MessageFactory
+				.createMessage(Strings.START_REQUEST_MESSAGE);
 
 		startMessage.setRatelimit(streamingRate);
 		startMessage.setServerPort(streamingPort);
 
-		log.info("Requesting start stream (rate: " + streamingRate + ") to " + buffer + "...");
+		log.info("Requesting start stream (rate: " + streamingRate + ") to "
+				+ buffer + "...");
 
 		try {
 			buffer.send(startMessage);
@@ -94,45 +114,46 @@ public class RemoteWebcam implements Webcam {
 	}
 
 	/**
-	 * Tries connecting to one of the other hosts being served by the overloaded remote peer.
+	 * Tries connecting to one of the other hosts being served by the overloaded
+	 * remote peer.
 	 */
 	protected void followHandover(Collection<Peer> alternativeHosts) {
 
-		log.debug("Finding the next available Peer...");
+		log.debug("Finding the next available peer...");
 
-		// TODO(kim): Handle the overloaded response message here.
 		peerIterator.addPeers(alternativeHosts);
 
 		Peer newServer = null;
 		try {
 			newServer = peerIterator.getNextPeer();
 		} catch (NoUnseenPeersException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			log.debug("No potential servers left to try...");
+			log.error("No potential servers left to try...");
+			throw new IllegalStateException("Could not follow handover for "
+					+ peer + ": no available peers");
 		}
 
-		log.debug("Available Peer found: " + newServer + ". Trying to connect...");
+		log.debug("Available peer found: " + newServer
+				+ ". Attempting to connect...");
 
-		// TODO I'm pretty sure this isn't nice...
-		// Start the whole process again
+		// Restart connecting to the alternative host.
 		this.peer = newServer;
-		buffer = connect();
-		listen();
+		init();
 	}
 
 	/**
 	 * Sends a request to the remote peer to stop streaming image data.
 	 *
 	 * @throws IOException
+	 *             if the message cannot be sent.
 	 */
 	public void stopStreaming() throws IOException {
 		buffer.send(MessageFactory.createMessage(Strings.STOP_REQUEST_MESSAGE));
 	}
 
 	/**
-	 * Runs a thread that listens for image data messages on the local {@link ConnectionBuffer} from
-	 * the remote peer and saves them they are received.
+	 * Runs a thread that listens for image data messages on the local
+	 * {@link ConnectionBuffer} from the remote peer and saves them they are
+	 * received.
 	 */
 	protected void listen() {
 		// Set up the local stream listener.
@@ -152,40 +173,44 @@ public class RemoteWebcam implements Webcam {
 
 					log.debug("Got message on " + buffer);
 
-
-					// If the message was an image response message, save it as the current frame.
-					String messageType = MessageFactory.getMessageType(response);
+					// If the message was an image response message, save it as
+					// the current frame.
+					String messageType = MessageFactory
+							.getMessageType(response);
 					if (messageType == null) {
-						throw new IllegalStateException("Received null message type");
+						throw new IllegalStateException(
+								"Received null message type");
 					}
 					switch (messageType) {
-						case Strings.IMAGE_RESPONSE_MESSAGE:
-							handleImageMessage(response);
-							break;
-						case Strings.STOPPED_RESPONSE_MESSAGE:
-							log.debug(this + " peer acknowledged stop request, shutting down...");
-							kill();
-							return;
-						case Strings.OVERLOADED_RESPONSE_MESSAGE:
-							OverloadedResponseMessage overloadedMessage =
-								(OverloadedResponseMessage) MessageFactory
-									.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
-							overloadedMessage.populateFieldsFromJSON(response);
-							log.debug("Remote peer " + buffer
-								+ " overloaded, performing handover... (" + overloadedMessage + ")");
-							
-							//build up a lost of alternative peers we can connect to.
-							Collection<Peer> alternativeHosts = new ArrayList<Peer>();
-							//Add the streaming server first (if it exists).
-							if (overloadedMessage.inRemoteMode()) {
-								alternativeHosts.add(overloadedMessage.getServer());
-							}
-							//Add the connected clients.
-							alternativeHosts = overloadedMessage.getClients();
-							
-							followHandover(alternativeHosts);
-							listenThread.interrupt();
-							break;
+					case Strings.IMAGE_RESPONSE_MESSAGE:
+						handleImageMessage(response);
+						break;
+					case Strings.STOPPED_RESPONSE_MESSAGE:
+						log.debug(this
+								+ " peer acknowledged stop request, shutting down...");
+						kill();
+						return;
+					case Strings.OVERLOADED_RESPONSE_MESSAGE:
+						OverloadedResponseMessage overloadedMessage = (OverloadedResponseMessage) MessageFactory
+								.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
+						overloadedMessage.populateFieldsFromJSON(response);
+						log.debug("Remote peer " + buffer
+								+ " overloaded, performing handover... ("
+								+ overloadedMessage + ")");
+
+						// build up a lost of alternative peers we can connect
+						// to.
+						Collection<Peer> alternativeHosts = new ArrayList<Peer>();
+						// Add the streaming server first (if it exists).
+						if (overloadedMessage.inRemoteMode()) {
+							alternativeHosts.add(overloadedMessage.getServer());
+						}
+						// Add the connected clients.
+						alternativeHosts = overloadedMessage.getClients();
+
+						followHandover(alternativeHosts);
+						listenThread.interrupt();
+						break;
 					}
 				}
 			}
@@ -197,14 +222,18 @@ public class RemoteWebcam implements Webcam {
 	}
 
 	/**
-	 * Handles the content of an image response message, saving the image data as the current frame.
+	 * Handles the content of an image response message, saving the image data
+	 * as the current frame.
 	 *
-	 * @param messageJson The JSON content of the message.
+	 * @param messageJson
+	 *            The JSON content of the message.
 	 */
 	protected void handleImageMessage(String messageJson) {
-		byte[] compressedImageData = ImageResponseMessage.imageDataFromJson(messageJson);
-		byte[] decompressedImageData = Compressor.decompress(compressedImageData);
-		setCurrentFrame(decompressedImageData);
+		byte[] compressedImageData = ImageResponseMessage
+				.imageDataFromJson(messageJson);
+		byte[] decompressedImageData = Compressor
+				.decompress(compressedImageData);
+		currentFrame = decompressedImageData;
 	}
 
 	/**
@@ -212,7 +241,7 @@ public class RemoteWebcam implements Webcam {
 	 */
 	@Override
 	public byte[] getImage() {
-		return getCurrentFrame();
+		return currentFrame;
 	}
 
 	@Override
@@ -231,14 +260,6 @@ public class RemoteWebcam implements Webcam {
 			log.error("Error shutting down " + buffer, e);
 		}
 		log.debug(this + " shut down successful");
-	}
-
-	public byte[] getCurrentFrame() {
-		return currentFrame;
-	}
-
-	public void setCurrentFrame(byte[] currentFrame) {
-		this.currentFrame = currentFrame;
 	}
 
 	public Peer getPeer() {

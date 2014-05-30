@@ -12,7 +12,6 @@ import simplestream.networking.Compressor;
 
 public class CompressionAndEncodingTests {
 
-
 	private boolean byteArraysEqual(byte[] b1, byte[] b2) {
 		for (int i = 0; i < b1.length; i++) {
 			boolean elementsEqual;
@@ -28,7 +27,6 @@ public class CompressionAndEncodingTests {
 		}
 		return true;
 	}
-
 
 	@Test
 	public void compressSimpleArray() {
@@ -67,8 +65,7 @@ public class CompressionAndEncodingTests {
 
 	@Test
 	public void encodeAndCompressString() {
-		String intialString =
-			"somelongstupidstring..fasdjfhasjdkfasdjfhasdf/asdfhasdfasdhfasdhjkfahsdjkfahskdf";
+		String intialString = "somelongstupidstring..fasdjfhasjdkfasdjfhasdf/asdfhasdfasdhfasdhjkfahsdjkfahskdf";
 
 		byte[] bytes = null;
 		try {

@@ -25,19 +25,22 @@ public class ConnectionListener extends Thread {
 	public static interface Callback {
 		/**
 		 * Invoked when a new client connection {@link Socket} is established.
-		 *
-		 * @param clientSocket The {@link Socket} established with the requesting client.
+		 * 
+		 * @param clientSocket
+		 *            The {@link Socket} established with the requesting client.
 		 */
 		public void onRequest(Socket clientSocket);
 	}
 
-	public ConnectionListener(final int port, Callback callback) throws IOException {
+	public ConnectionListener(final int port, Callback callback)
+			throws IOException {
 		this.socket = new ServerSocket(port);
 		this.callback = callback;
 	}
 
 	/**
-	 * Listens for incoming connections and hands new clients off the to {@link Callback}.
+	 * Listens for incoming connections and hands new clients off the to
+	 * {@link Callback}.
 	 */
 	public void run() {
 		int i = 0;
@@ -48,11 +51,11 @@ public class ConnectionListener extends Thread {
 			}
 
 			try {
-				log.debug("Server listening for connections on port " + socket.getLocalPort()
-					+ "...");
+				log.debug("Server listening for connections on port "
+						+ socket.getLocalPort() + "...");
 				Socket clientSocket = socket.accept();
 				log.debug(String.format("Received connection %d from %s", ++i,
-					clientSocket.getRemoteSocketAddress()));
+						clientSocket.getRemoteSocketAddress()));
 				callback.onRequest(clientSocket);
 			} catch (IOException e) {
 				log.error("Socket closed unexpectedly", e);

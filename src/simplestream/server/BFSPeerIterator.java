@@ -10,21 +10,24 @@ import org.apache.log4j.Logger;
 
 import simplestream.networking.Peer;
 
+/**
+ * Searches for an available alternative {@link Peer} to handover to.
+ */
 public class BFSPeerIterator {
 
-	
 	private final Logger log = Logger.getLogger(getClass());
-	
-	
-	List<Peer> seenPeers;
+
+	/** The {@link Peer}s to explore. */
 	Queue<Peer> peerQueue;
-		
+
+	/** The {@link Peer}s that have been explored. */
+	List<Peer> seenPeers;
 
 	public BFSPeerIterator() {
 
 		seenPeers = new ArrayList<Peer>();
 		peerQueue = new LinkedList<Peer>();
-		
+
 		log.debug("Starting the BFSPeerIterator");
 	}
 
@@ -34,7 +37,6 @@ public class BFSPeerIterator {
 		peerQueue.addAll(peers);
 	}
 
-
 	public void addPeer(Peer peer) {
 		this.peerQueue.add(peer);
 	}
@@ -43,23 +45,32 @@ public class BFSPeerIterator {
 		this.peerQueue.addAll(alternativeHosts);
 	}
 
+	/**
+	 * Marks the given {@link Peer} as having been explored and unsuitable.
+	 *
+	 * @param peer
+	 *            The {@link Peer} to mark.
+	 */
 	private void markPeerAsSeen(Peer peer) {
+		log.debug("Marking peer " + peer + " as seen.");
 		seenPeers.add(peer);
-		
-		log.debug("Marking Peer: " + peer + "as seen.");
 	}
 
-	// returns the next unseen peer and then marks it as seen
+	/**
+	 * Returns the next unseen {@link Peer} and then marks it as seen.
+	 *
+	 * @throws NoUnseenPeersException
+	 *             if all the {@link Peer}s have been seen, and none are
+	 *             suitable.
+	 */
 	public Peer getNextPeer() throws NoUnseenPeersException {
-
 		if (peerQueue.isEmpty()) {
 			throw new NoUnseenPeersException();
 		}
 
-		// Get the head of the queue
 		Peer nextPeer = peerQueue.poll();
 
-		// Keep popping the head off the queue until we find a peer we haven't seen
+		// Keep popping the head off the queue until we find an unseen peer.
 		while (!peerQueue.isEmpty() && seenPeers.contains(nextPeer)) {
 			nextPeer = peerQueue.poll();
 		}
@@ -70,7 +81,6 @@ public class BFSPeerIterator {
 			markPeerAsSeen(nextPeer);
 			return nextPeer;
 		}
-
 	}
 
 }

@@ -16,11 +16,12 @@ import simplestream.networking.Peer;
 import simplestream.webcam.Webcam;
 
 /**
- * Services a single {@link StreamClient} by responding to requests and streaming localWebcam data
- * when applicable.
- *
- * New {@link ClientHandler}s start themselves on their own thread, so calling {@link #kill()} will
- * stop the handler gracefully and clean up all necessary resources.
+ * Services a single {@link StreamClient} by responding to requests and
+ * streaming localWebcam data when applicable.
+ * 
+ * New {@link ClientHandler}s start themselves on their own thread, so calling
+ * {@link #kill()} will stop the handler gracefully and clean up all necessary
+ * resources.
  */
 public class ClientHandler implements Runnable {
 
@@ -50,15 +51,16 @@ public class ClientHandler implements Runnable {
 	/** The callback to run when the client is shut down. */
 	private Runnable shutdownCallback;
 
-	public ClientHandler(ConnectionBuffer buffer, Webcam webcam, int streamingRate) {
+	public ClientHandler(ConnectionBuffer buffer, Webcam webcam,
+			int streamingRate) {
 		this.buffer = buffer;
 		this.webcam = webcam;
 		this.streamingRate = streamingRate;
 	}
 
 	/**
-	 * Performs the main loop of listening for requests from the client and streaming the local
-	 * localWebcam.
+	 * Performs the main loop of listening for requests from the client and
+	 * streaming the local localWebcam.
 	 */
 	@Override
 	public void run() {
@@ -67,19 +69,22 @@ public class ClientHandler implements Runnable {
 			try {
 				log.debug("Listening for startstream request...");
 				String request = buffer.receive();
-				if (MessageFactory.getMessageType(request).equals(Strings.START_REQUEST_MESSAGE)) {
-					StartRequestMessage message =
-						(StartRequestMessage) MessageFactory
+				if (MessageFactory.getMessageType(request).equals(
+						Strings.START_REQUEST_MESSAGE)) {
+					StartRequestMessage message = (StartRequestMessage) MessageFactory
 							.createMessage(Strings.START_REQUEST_MESSAGE);
 					message.populateFieldsFromJSON(request);
 
-					// Read out the port the client is serving on and the rate to serve at.
+					// Read out the port the client is serving on and the rate
+					// to serve at.
 					setSport(message.getServerPort());
 					streamingRate = Math.max(message.getRatelimit(), 100);
-					log.info("Received startstream request (sport: " + getSport() + ", rate: "
-						+ streamingRate + ") from " + buffer);
+					log.info("Received startstream request (sport: "
+							+ getSport() + ", rate: " + streamingRate
+							+ ") from " + buffer);
 					streaming = true;
-					buffer.send(MessageFactory.createMessage(Strings.START_RESONSE_MESSAGE));
+					buffer.send(MessageFactory
+							.createMessage(Strings.START_RESONSE_MESSAGE));
 					log.info("Sent status response to " + buffer);
 				}
 			} catch (IOException e) {
@@ -94,7 +99,8 @@ public class ClientHandler implements Runnable {
 	}
 
 	/**
-	 * Starts a thread to continually send a stream of images from the local webcam.
+	 * Starts a thread to continually send a stream of images from the local
+	 * webcam.
 	 */
 	protected void loopSend() {
 		sendThread = new Thread(new Runnable() {
@@ -107,11 +113,13 @@ public class ClientHandler implements Runnable {
 						log.debug("Sending image data on " + buffer + "...");
 						buffer.send(buildImageMessage());
 					} catch (IOException e) {
-						log.error("Error retrieving localWebcam image for " + buffer);
+						log.error("Error retrieving localWebcam image for "
+								+ buffer);
 						log.error("Error was " + e);
 					}
 
-					// TODO(orlade): Allow for a streaming rate different from the local localWebcam
+					// TODO(orlade): Allow for a streaming rate different from
+					// the local localWebcam
 					// (i.e. implement client rate limiting)
 					try {
 						Thread.sleep(streamingRate);
@@ -126,8 +134,8 @@ public class ClientHandler implements Runnable {
 	}
 
 	/**
-	 * Spins up a thread to listen for stop requests. If one is received, stops streaming image data
-	 * to the client.
+	 * Spins up a thread to listen for stop requests. If one is received, stops
+	 * streaming image data to the client.
 	 */
 	protected void listenForStop() {
 		stopThread = new Thread(new Runnable() {
@@ -136,9 +144,11 @@ public class ClientHandler implements Runnable {
 				while (true) {
 					try {
 						String request = buffer.receive();
-						String messageType = MessageFactory.getMessageType(request);
+						String messageType = MessageFactory
+								.getMessageType(request);
 						if (Strings.STOP_REQUEST_MESSAGE.equals(messageType)) {
-							log.info("Received stop request from " + buffer.getPeer());
+							log.info("Received stop request from "
+									+ buffer.getPeer());
 							acknowledgeStop();
 							return;
 						}
@@ -154,12 +164,12 @@ public class ClientHandler implements Runnable {
 
 	/**
 	 * Constructs an {@link ImageResponseMessage} to send to the client.
-	 *
+	 * 
 	 * @return The constructed message.
 	 */
 	protected Message buildImageMessage() {
-		ImageResponseMessage message =
-			(ImageResponseMessage) MessageFactory.createMessage(Strings.IMAGE_RESPONSE_MESSAGE);
+		ImageResponseMessage message = (ImageResponseMessage) MessageFactory
+				.createMessage(Strings.IMAGE_RESPONSE_MESSAGE);
 
 		// get the localWebcam image data and compress it
 		byte[] imageData = webcam.getImage();
@@ -170,10 +180,12 @@ public class ClientHandler implements Runnable {
 	}
 
 	/**
-	 * Notifies the client that the request to stop streaming has been received and actioned.
+	 * Notifies the client that the request to stop streaming has been received
+	 * and actioned.
 	 */
 	protected void acknowledgeStop() throws IOException {
-		buffer.send(MessageFactory.createMessage(Strings.STOPPED_RESPONSE_MESSAGE));
+		buffer.send(MessageFactory
+				.createMessage(Strings.STOPPED_RESPONSE_MESSAGE));
 		kill();
 	}
 

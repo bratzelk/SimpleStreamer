@@ -6,11 +6,11 @@ import java.awt.image.WritableRaster;
 
 import javax.swing.JPanel;
 
+/**
+ * A Java Swing panel to display images in.
+ */
 public class Viewer extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private BufferedImage image;
 
@@ -33,8 +33,8 @@ public class Viewer extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawImage(image, 0, 0, null); // see javadoc for more info on the parameters
+		g.drawImage(image, 0, 0, null); // see javadoc for more info on the
+										// parameters
 	}
-
 
 }

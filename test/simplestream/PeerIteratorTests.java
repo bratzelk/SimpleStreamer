@@ -12,7 +12,6 @@ import simplestream.networking.Peer;
 import simplestream.server.BFSPeerIterator;
 import simplestream.server.NoUnseenPeersException;
 
-
 public class PeerIteratorTests {
 
 	BFSPeerIterator peerIterator;
@@ -24,8 +23,8 @@ public class PeerIteratorTests {
 
 	private Peer createRandomPeer() {
 		Random r = new Random();
-		String randomHostname =
-			r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256);
+		String randomHostname = r.nextInt(256) + "." + r.nextInt(256) + "."
+				+ r.nextInt(256) + "." + r.nextInt(256);
 		int randomPort = r.nextInt((65535) + 1);
 		Peer randomPeer = new Peer(randomHostname, randomPort);
 		return randomPeer;

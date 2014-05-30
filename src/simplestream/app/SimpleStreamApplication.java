@@ -15,9 +15,10 @@ import simplestream.webcam.LocalWebcam;
 import simplestream.webcam.RemoteWebcam;
 import simplestream.webcam.Webcam;
 
-
 /**
- * This is the greatest and best app in the world.
+ * The main class for the SimpleStreamer app. Configured via command line
+ * arguments. Instantiates both a client to view streamed images, and a server
+ * to stream them out to other clients.
  */
 public class SimpleStreamApplication {
 
@@ -45,12 +46,15 @@ public class SimpleStreamApplication {
 	/** The local server component that streams out to incoming connections. */
 	private StreamServer server;
 
-	/** The local client component that displays whatever images are being streamed. */
+	/**
+	 * The local client component that displays whatever images are being
+	 * streamed.
+	 */
 	private StreamClient client;
 
 	/**
-	 * A callback to invoke to shut down the whole application gracefully, including streaming
-	 * connections remote hosts.
+	 * A callback to invoke to shut down the whole application gracefully,
+	 * including streaming connections remote hosts.
 	 */
 	private final Runnable exitCallback = new Runnable() {
 		@Override
@@ -66,7 +70,8 @@ public class SimpleStreamApplication {
 	/**
 	 * The main application entry point.
 	 *
-	 * @param args Command line arguments.
+	 * @param args
+	 *            Command line arguments.
 	 */
 	public static void main(String[] args) {
 		SimpleStreamApplication instance = new SimpleStreamApplication();
@@ -75,7 +80,8 @@ public class SimpleStreamApplication {
 	}
 
 	/**
-	 * Sets up the client and server components. All command line arguments should have been parsed.
+	 * Sets up the client and server components. All command line arguments
+	 * should have been parsed.
 	 */
 	public void init() {
 		log.debug(Settings.APP_NAME + " " + Settings.APP_VERSION);
@@ -86,11 +92,13 @@ public class SimpleStreamApplication {
 			webcam = new LocalWebcam();
 		} else {
 			log.debug("Initiating remote webcam stream...");
-			webcam = new RemoteWebcam(streamingRate, streamingPort, hostname, remotePort);
+			webcam = new RemoteWebcam(streamingRate, streamingPort, hostname,
+					remotePort);
 		}
 
 		log.debug("Creating server...");
-		server = new StreamServer(webcam, streamingRate, streamingPort, isRemote());
+		server = new StreamServer(webcam, streamingRate, streamingPort,
+				isRemote());
 
 		log.debug("Creating client...");
 		client = new StreamClient(webcam, exitCallback);
@@ -121,7 +129,7 @@ public class SimpleStreamApplication {
 			// if there's a problem with the args.
 			log.error(e);
 			log.error("Usage is: java -jar SimpleStreamer.jar "
-				+ "[-sport X] [-remote hostname [-rport Y]] [-rate Z]");
+					+ "[-sport X] [-remote hostname [-rport Y]] [-rate Z]");
 			parser.printUsage(System.err);
 			System.exit(-1);
 		}

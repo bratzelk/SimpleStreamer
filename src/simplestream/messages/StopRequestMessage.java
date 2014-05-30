@@ -2,6 +2,9 @@ package simplestream.messages;
 
 import simplestream.common.Strings;
 
+/**
+ * Requests the server stop streaming data.
+ */
 public class StopRequestMessage extends RequestMessage {
 
 	@Override

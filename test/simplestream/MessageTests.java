@@ -10,7 +10,6 @@ import simplestream.messages.MessageFactory;
 
 public class MessageTests {
 
-
 	@Test
 	public void messageCreation() {
 		String desiredMessageType = Strings.START_REQUEST_MESSAGE;

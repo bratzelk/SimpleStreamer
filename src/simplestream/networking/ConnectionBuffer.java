@@ -17,7 +17,9 @@ import simplestream.messages.Message;
 /**
  * Sends and receives simplestream.messages between hosts.
  *
- * @see http://docs.oracle.com/javase/tutorial/networking/sockets/readingWriting.html
+ * @see http
+ *      ://docs.oracle.com/javase/tutorial/networking/sockets/readingWriting.
+ *      html
  */
 public class ConnectionBuffer {
 
@@ -50,10 +52,11 @@ public class ConnectionBuffer {
 	 * Create a socket to connect to the server.
 	 */
 	public static ConnectionBuffer bind(Peer remoteServer) throws IOException {
-		Socket socket = new Socket(remoteServer.getHostname(), remoteServer.getPort());
+		Socket socket = new Socket(remoteServer.getHostname(),
+				remoteServer.getPort());
 		ConnectionBuffer buffer = new ConnectionBuffer(socket);
-		log.debug(buffer + " Established connection to " + remoteServer.getHostname() + ":"
-			+ remoteServer.getPort());
+		log.debug(buffer + " Established connection to "
+				+ remoteServer.getHostname() + ":" + remoteServer.getPort());
 		return buffer;
 	}
 
@@ -67,7 +70,8 @@ public class ConnectionBuffer {
 		String response = reader.readLine();
 		String print = truncate(response, 40);
 		if (print != null) {
-			// log.debug(this + " Received response: " + truncate(response, 40));
+			// log.debug(this + " Received response: " + truncate(response,
+			// 40));
 		}
 		return response;
 	}
@@ -75,7 +79,8 @@ public class ConnectionBuffer {
 	/**
 	 * Sends a message without waiting for a response.
 	 *
-	 * @param message The message to send.
+	 * @param message
+	 *            The message to send.
 	 * @throws IOException
 	 */
 	public void send(String message) throws IOException {
@@ -86,7 +91,8 @@ public class ConnectionBuffer {
 	/**
 	 * Sends a {@link Message} without waiting for a response.
 	 *
-	 * @param message The message to send.
+	 * @param message
+	 *            The message to send.
 	 * @throws IOException
 	 */
 	public void send(Message message) throws IOException {
@@ -96,7 +102,8 @@ public class ConnectionBuffer {
 	/**
 	 * Sends a message via the socket.
 	 *
-	 * @param message The message to send.
+	 * @param message
+	 *            The message to send.
 	 * @return The response received.
 	 */
 	public String sendAndReceive(String message) {
@@ -106,7 +113,8 @@ public class ConnectionBuffer {
 			// Receive the response.
 			String response = receive();
 			if (response.equals("ERROR")) {
-				throw new RuntimeException("Server failed to handle message:" + message);
+				throw new RuntimeException("Server failed to handle message:"
+						+ message);
 			}
 			return response;
 		} catch (UnknownHostException e) {
@@ -122,7 +130,8 @@ public class ConnectionBuffer {
 	/**
 	 * Serializes and sends the given message.
 	 *
-	 * @param message The {@link Message} to send.
+	 * @param message
+	 *            The {@link Message} to send.
 	 * @return The response received.
 	 */
 	public String sendAndReceive(Message message) {
@@ -132,8 +141,10 @@ public class ConnectionBuffer {
 	/**
 	 * Truncates the string to the given length.
 	 *
-	 * @param message The message to truncate.
-	 * @param lengthThe maximum length of the truncated message string.
+	 * @param message
+	 *            The message to truncate.
+	 * @param lengthThe
+	 *            maximum length of the truncated message string.
 	 * @return The truncated message.
 	 */
 	protected String truncate(String message, int maxLength) {
@@ -163,7 +174,9 @@ public class ConnectionBuffer {
 
 	@Override
 	public String toString() {
-		return "ConnectionBuffer[" + socket.getLocalAddress() + ":" + socket.getLocalPort()
-			+ " -> " + peer.getHostname() + ":" + peer.getPort() + "]";
+		return "ConnectionBuffer[" + socket.getLocalAddress() + ":"
+				+ socket.getLocalPort() + " -> " + peer.getHostname() + ":"
+				+ peer.getPort() + "]";
 	}
+
 }

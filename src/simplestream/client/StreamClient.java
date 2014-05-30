@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 
 import simplestream.webcam.Webcam;
 
-
 /**
  * Manages the display of the webcam stream in either local or remote modes.
  */
@@ -15,13 +14,19 @@ public class StreamClient {
 	/** Number of ms between rendering each frame. */
 	private static final int DISPLAY_RATE = 100;
 
-	/** The {@link Webcam} currently being used to stream images (local or remote). */
+	/**
+	 * The {@link Webcam} currently being used to stream images (local or
+	 * remote).
+	 */
 	private Webcam webcam;
 
 	/** The viewer in which to render the local webcam images. */
 	private final StreamViewer viewer;
 
-	/** The thread that constantly updates the current image in the {@link StreamViewer}. */
+	/**
+	 * The thread that constantly updates the current image in the
+	 * {@link StreamViewer}.
+	 */
 	private Thread viewerThread;
 
 	/**

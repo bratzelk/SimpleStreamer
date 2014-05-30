@@ -21,8 +21,9 @@ import simplestream.webcam.RemoteWebcam;
 import simplestream.webcam.Webcam;
 
 /**
- * Wraps and runs a {@link ConnectionListener} on a new thread to catch incoming connections. New
- * clients are delegated to be handled by individual {@link ClientHandler}s on new threads.
+ * Wraps and runs a {@link ConnectionListener} on a new thread to catch incoming
+ * connections. New clients are delegated to be handled by individual
+ * {@link ClientHandler}s on new threads.
  */
 public class StreamServer {
 
@@ -31,7 +32,10 @@ public class StreamServer {
 	/** Listens for new incoming connections. */
 	private ConnectionListener listener;
 
-	/** A stream from the current webcam this host is streaming from (local or remote). */
+	/**
+	 * A stream from the current webcam this host is streaming from (local or
+	 * remote).
+	 */
 	private final Webcam webcam;
 
 	/** The rate to display localWebcam images at. */
@@ -47,15 +51,16 @@ public class StreamServer {
 	 */
 	private final Callback clientConnectionCallback = new Callback() {
 		/**
-		 * Handle new requests by responding with a {@link StatusResponseMessage}.
+		 * Handle new requests by responding with a
+		 * {@link StatusResponseMessage}.
 		 */
 		@Override
 		public void onRequest(final Socket clientSocket) {
 			try {
 				ConnectionBuffer buffer = new ConnectionBuffer(clientSocket);
 				log.info("Received connection, connected on " + buffer);
-				Message statusMessage =
-					MessageFactory.createMessage(Strings.STATUS_RESONSE_MESSAGE);
+				Message statusMessage = MessageFactory
+						.createMessage(Strings.STATUS_RESONSE_MESSAGE);
 				buffer.send(statusMessage.toJSON());
 
 				// If we have reached the maximum number of allowed connections
@@ -66,21 +71,22 @@ public class StreamServer {
 					doHandover(buffer);
 				}
 			} catch (IOException e) {
-				throw new IllegalStateException("Failed to connect with client", e);
+				throw new IllegalStateException(
+						"Failed to connect with client", e);
 			}
 		}
 	};
 
 	/**
-	 * Responds to a client attempting to connect to an overloaded server with the list of existing
-	 * clients streaming from the same server.
-	 *
-	 * @param buffer The {@link ConnectionBuffer} to the prospective client.
+	 * Responds to a client attempting to connect to an overloaded server with
+	 * the list of existing clients streaming from the same server.
+	 * 
+	 * @param buffer
+	 *            The {@link ConnectionBuffer} to the prospective client.
 	 * @throws IOException
 	 */
 	protected void doHandover(ConnectionBuffer buffer) throws IOException {
-		OverloadedResponseMessage overloadedResponse =
-			(OverloadedResponseMessage) MessageFactory
+		OverloadedResponseMessage overloadedResponse = (OverloadedResponseMessage) MessageFactory
 				.createMessage(Strings.OVERLOADED_RESPONSE_MESSAGE);
 
 		// TODO
@@ -90,7 +96,8 @@ public class StreamServer {
 
 		// add the connected clients
 		for (ClientHandler client : clients) {
-			Peer servingPeer = new Peer(client.getPeer().getHostname(), client.getSport());
+			Peer servingPeer = new Peer(client.getPeer().getHostname(),
+					client.getSport());
 			// Add client peer to message.
 			overloadedResponse.addClient(servingPeer);
 		}
@@ -101,17 +108,20 @@ public class StreamServer {
 
 	/**
 	 * Wraps a connection listener on a new thread that
-	 *
-	 * @param streamingPort The port to stream
-	 * @param isRemote TODO
+	 * 
+	 * @param streamingPort
+	 *            The port to stream
+	 * @param isRemote
+	 *            TODO
 	 */
-	public StreamServer(final Webcam webcam, final int streamingRate, final int streamingPort,
-		Boolean isRemote) {
+	public StreamServer(final Webcam webcam, final int streamingRate,
+			final int streamingPort, Boolean isRemote) {
 		this.webcam = webcam;
 		this.streamingRate = streamingRate;
 		this.isRemote = isRemote;
 		try {
-			listener = new ConnectionListener(streamingPort, clientConnectionCallback);
+			listener = new ConnectionListener(streamingPort,
+					clientConnectionCallback);
 			listener.start();
 		} catch (IOException e) {
 			log.error("Listen socket error", e);
@@ -119,13 +129,16 @@ public class StreamServer {
 	}
 
 	/**
-	 * Listens for and handles requests from a client represented by the {@link ConnectionBuffer}.
-	 *
-	 * @param buffer The connection to the client.
+	 * Listens for and handles requests from a client represented by the
+	 * {@link ConnectionBuffer}.
+	 * 
+	 * @param buffer
+	 *            The connection to the client.
 	 */
 	protected void serve(ConnectionBuffer buffer) {
 		log.info("Serving client on " + buffer);
-		final ClientHandler client = new ClientHandler(buffer, webcam, streamingRate);
+		final ClientHandler client = new ClientHandler(buffer, webcam,
+				streamingRate);
 
 		client.setShutdownCallback(new Runnable() {
 			@Override

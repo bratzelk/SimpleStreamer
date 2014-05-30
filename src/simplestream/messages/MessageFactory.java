@@ -13,8 +13,14 @@ public class MessageFactory {
 
 	private static final JSONParser parser = new JSONParser();
 
+	/**
+	 * Creates an empty message of the given type.
+	 *
+	 * @param messageType
+	 *            The type of message to create.
+	 * @return The created {@link Message}.
+	 */
 	public static Message createMessage(String messageType) {
-		// Ensure this string is always lowercase.
 		messageType = messageType.toLowerCase();
 
 		if (messageType.equals(Strings.START_REQUEST_MESSAGE)) {
@@ -32,21 +38,32 @@ public class MessageFactory {
 		} else if (messageType.equals(Strings.OVERLOADED_RESPONSE_MESSAGE)) {
 			return new OverloadedResponseMessage();
 		} else {
-			throw new IllegalArgumentException("Unknown message type: " + messageType);
+			throw new IllegalArgumentException("Unknown message type: "
+					+ messageType);
 		}
 	}
 
+	/**
+	 * Extracts the type of the {@link Message} from a serialized JSON string.
+	 *
+	 * @param messageJson
+	 *            The JSON of the message to get the type of.
+	 * @return The type of the message.
+	 */
 	public static String getMessageType(String messageJson) {
-		if (messageJson == null) return null;
+		if (messageJson == null)
+			return null;
 
 		JSONObject obj;
 		try {
 			obj = (JSONObject) parser.parse(messageJson);
 			if (obj == null) {
-				throw new IllegalArgumentException("Deserialized message is null: " + messageJson);
+				throw new IllegalArgumentException(
+						"Deserialized message is null: " + messageJson);
 			}
 		} catch (ParseException e) {
-			throw new IllegalArgumentException("Message not valid JSON: " + messageJson);
+			throw new IllegalArgumentException("Message not valid JSON: "
+					+ messageJson);
 		}
 		if (obj.containsKey(Strings.REQUEST_MESSAGE)) {
 			return obj.get(Strings.REQUEST_MESSAGE).toString();
@@ -55,34 +72,4 @@ public class MessageFactory {
 		}
 	}
 
-	// public static Message deserializeMessage(String messageJson) {
-	// JSONObject obj;
-	// try {
-	// obj = (JSONObject) parser.parse(messageJson);
-	// if (obj == null) {
-	// throw new IllegalArgumentException("Deserialized message is null: " + messageJson);
-	// }
-	// } catch (ParseException e) {
-	// throw new IllegalArgumentException("Message not valid JSON: " + messageJson);
-	// }
-	//
-	// if (obj != null) {
-	// String messageType = obj.get("Type").toString();
-	// if (messageType.equals(Strings.START_REQUEST_MESSAGE)) {
-	// Message message = new StartRequestMessage();
-	// }
-	// if (obj.get("Type").equals("StartUpdate"))
-	// message = new StartUpdateInstruction();
-	// else if (obj.get("Type").equals("EndUpdate"))
-	// message = new EndUpdateInstruction();
-	// else if (obj.get("Type").equals("CopyBlock"))
-	// message = new CopyBlockInstruction();
-	// else if (obj.get("Type").equals("NewBlock"))
-	// message = new NewBlockInstruction();
-	// else if (obj.get("Type").equals("Config")) message = new ConfigInstruction();
-	// message.FromJSON(jst);
-	// return message;
-	// } else
-	// return null;
-	// }
 }

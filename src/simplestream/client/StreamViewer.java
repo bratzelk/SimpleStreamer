@@ -11,10 +11,11 @@ import javax.swing.KeyStroke;
 
 import org.apache.log4j.Logger;
 
+import simplestream.webcam.Webcam;
+
 /**
- * I made this very quickly by copying the code from Aaron's LocalView class. It should work the
- * same way but instead of reading from the webcam it should be given an image to display. It may
- * require some changes...
+ * Displays images from a {@link Webcam} in a Java Swing GUI, using a
+ * {@link Viewer}.
  */
 public class StreamViewer {
 
@@ -22,6 +23,8 @@ public class StreamViewer {
 
 	private final Viewer myViewer;
 	private final JFrame frame;
+
+	/** A callback to invoke when the user exit the viewer. */
 	private final Runnable exitCallback;
 
 	// Listen for a shutdown action, then invoke the exit callback.
@@ -40,7 +43,8 @@ public class StreamViewer {
 	/**
 	 * Creates a new {@link StreamViewer} instance to display webcam images.
 	 *
-	 * @param exitCallback A callback to run when the user exits the program.
+	 * @param exitCallback
+	 *            A callback to run when the user exits the program.
 	 */
 	public StreamViewer(Runnable exitCallback) {
 
@@ -54,17 +58,16 @@ public class StreamViewer {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(myViewer);
 
-
 		// Attach a listener for the Enter key to shutdown the program.
 		myViewer.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-			KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "shutdownAction");
+				KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "shutdownAction");
 		myViewer.getActionMap().put("shutdownAction", shutdownAction);
 	}
 
 	/**
-	 * Add a frame which is displayed by the viewer This data should be de-compressed etc and ready
-	 * to be viewed.
-	 * */
+	 * Add a frame which is displayed by the viewer. This data should be
+	 * de-compressed and ready to be viewed.
+	 */
 	public void addImage(byte[] imageData) {
 		myViewer.ViewerInput(imageData);
 		frame.repaint();
