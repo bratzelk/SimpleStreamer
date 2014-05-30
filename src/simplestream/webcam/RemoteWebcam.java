@@ -1,6 +1,7 @@
 package simplestream.webcam;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
@@ -172,10 +173,16 @@ public class RemoteWebcam implements Webcam {
 							overloadedMessage.populateFieldsFromJSON(response);
 							log.debug("Remote peer " + buffer
 								+ " overloaded, performing handover... (" + overloadedMessage + ")");
-							Collection<Peer> alternativeHosts = overloadedMessage.getClients();
+							
+							//build up a lost of alternative peers we can connect to.
+							Collection<Peer> alternativeHosts = new ArrayList<Peer>();
+							//Add the streaming server first (if it exists).
 							if (overloadedMessage.inRemoteMode()) {
 								alternativeHosts.add(overloadedMessage.getServer());
 							}
+							//Add the connected clients.
+							alternativeHosts = overloadedMessage.getClients();
+							
 							followHandover(alternativeHosts);
 							listenThread.interrupt();
 							break;
